@@ -1,0 +1,33 @@
+module org:protelis:randomTarget
+
+def randomTarget() {
+	let minLat = env.get("minLat")
+	let maxLat = env.get("maxLat")
+	let minLon = env.get("minLon")
+	let maxLon = env.get("maxLon")
+	let lat = (maxLat - minLat) * self.nextRandomDouble() + minLat
+	let lon = (maxLon - minLon) * self.nextRandomDouble() + minLon
+	// env.put("DEBUG: lat", lat)
+	// env.put("DEBUG: lon", lon)
+	let router = self.getEnvironmentAccess().getRoutingService()
+	let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(lat, lon)))
+	env.put("target", result.orElse(self.getDevicePosition()))
+	result
+}
+
+let position = self.getDevicePosition()
+let now = self.getCurrentTime()
+let frame = 40
+
+if (env.get("target") == [0, 0]) { randomTarget() };
+rep (still <- [now, position]) {
+    let stillTime = still.get(0)
+    let stillPosition = still.get(1)
+    if (now - stillTime > frame) {
+        let isStill = position == stillPosition;
+        if (isStill) { randomTarget() }
+        [now, position]
+    } else {
+        [stillTime, stillPosition]
+    }
+}

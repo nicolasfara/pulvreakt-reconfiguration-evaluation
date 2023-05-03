@@ -1,3 +1,4 @@
+import org.gradle.configurationcache.extensions.capitalized
 import java.awt.GraphicsEnvironment
 import java.io.ByteArrayOutputStream
 
@@ -29,7 +30,7 @@ val usesJvm: Int = File(File(projectDir, "docker/sim"), "Dockerfile")
     .first { it.isNotBlank() }
     .let {
         Regex("FROM\\s+eclipse-temurin:(\\d+)\\s*$").find(it)?.groups?.get(1)?.value
-            ?: throw IllegalStateException("Cannot read information on the JVM to use.")
+            ?: error("Cannot read information on the JVM to use.")
     }
     .toInt()
 
@@ -40,6 +41,8 @@ multiJvm {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.bundles.alchemist.protelis)
+    implementation(libs.bundles.pulverization)
+    implementation(libs.kotlinx.coroutine)
     if (!GraphicsEnvironment.isHeadless()) {
         implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
     }
@@ -47,7 +50,7 @@ dependencies {
 
 // Heap size estimation for batches
 val maxHeap: Long? by project
-val heap: Long = maxHeap ?: if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+val heap: Long = maxHeap ?: if (System.getProperty("os.name").lowercase().contains("linux")) {
     ByteArrayOutputStream().use { output ->
         exec {
             executable = "bash"
@@ -97,11 +100,11 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
             javaLauncher.set(
                 javaToolchains.launcherFor {
                     languageVersion.set(JavaLanguageVersion.of(usesJvm))
-                }
+                },
             )
             this.additionalConfiguration()
         }
-        val capitalizedName = it.nameWithoutExtension.capitalize()
+        val capitalizedName = it.nameWithoutExtension.capitalized()
         val graphic by basetask("run${capitalizedName}Graphic")
         runAllGraphic.dependsOn(graphic)
         val batch by basetask("run${capitalizedName}Batch") {
@@ -111,9 +114,9 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
             args(
                 "-e", "data/${it.nameWithoutExtension}",
                 "-b",
-                "-var", "seed", "spacing", "error",
+                "-var", "seed", "device_count", "behaviour_cost", // "communication_cost", "sensors_cost", "intra_comm_cost",
                 "-p", threadCount,
-                "-i", 1
+                "-i", 1,
             )
         }
         runAllBatch.dependsOn(batch)

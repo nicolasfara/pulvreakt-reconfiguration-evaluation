@@ -1,0 +1,7 @@
+module org:protelis:setupDevice
+import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.startPulverization
+
+def randomStartupCharge(maxBatt, minBatt) = (maxBatt - minBatt) * self.nextRandomDouble() + minBatt
+
+env.put("currentCapacity", randomStartupCharge(env.get("batteryCapacity"), env.get("minCapacity")))
+startPulverization()

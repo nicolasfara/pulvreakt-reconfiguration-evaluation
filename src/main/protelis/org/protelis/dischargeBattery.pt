@@ -1,0 +1,59 @@
+module org:protelis:dischargeBattery
+import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.onBatteryChangeEvent
+
+/**
+ * Given the [currentCharge] the function discharge the battery accordingly.
+ * @returns the new charge.
+ */
+def discharge(currentCharge, delta) {
+    let behaviourDischargeRate = env.get("behaviourDischargeRate")
+    let communicationDischargeRate = env.get("communicationDischargeRate")
+    let sensorsDischargeRate = env.get("sensorsDischargeRate")
+    let intraComponentCommCost = env.get("intraComponentCommCost")
+
+    let behaviourInDevice = env.get("behaviourInDevice")
+    let communicationInDevice = env.get("communicationInDevice")
+    let sensorsInDevice = env.get("sensorsInDevice")
+
+    let intraCommCosts = intraComponentCost(behaviourInDevice, communicationInDevice, sensorsInDevice)
+    let behaviourCost = if (behaviourInDevice) { behaviourDischargeRate } else { 0.0 }
+    let commCost = if (communicationInDevice) { communicationDischargeRate } else { 0.0 }
+    let sensorsCost = if (sensorsInDevice) { sensorsDischargeRate } else { 0.0 }
+
+    let sumCosts = intraCommCosts + behaviourCost + commCost + sensorsCost;
+    env.put("realtimeConsumption", sumCosts)
+    let newCharge = currentCharge - (sumCosts * delta / 3600.0)
+    if (newCharge < 0.0) { env.put("isCharging", true); 0.0 } else { newCharge }
+}
+
+/**
+ * Determines the communication cost based on the local active components.
+ * @returns the cost for the communication between (remote) components.
+ */
+def intraComponentCost(bhvLocal, commLocal, sensLocal) {
+    let intraComponentCommCost = env.get("intraComponentCommCost")
+    if (bhvLocal) {
+        if (!commLocal) { intraComponentCommCost } else { 0.0 } + if (!sensLocal) { intraComponentCommCost } else { 0.0 }
+    } else {
+        if (commLocal) { intraComponentCommCost } else { 0.0 } + if (sensLocal) { intraComponentCommCost } else { 0.0 }
+    }
+}
+
+def recharge(currentCharge, delta) {
+    let rechargeRate = env.get("rechargeRate")
+    let addingCharge = rechargeRate * delta / 3600.0
+    env.put("Recharge: ", addingCharge)
+    if (currentCharge >= env.get("batteryCapacity")) { env.put("isCharging", false); env.get("batteryCapacity") } else { currentCharge + addingCharge }
+}
+
+let now = self.getCurrentTime();
+
+rep (still <- now) {
+    let delta = now - still
+    env.put("DELTA: ", delta)
+    let isCharging = env.get("isCharging")
+    let newCharge = if (isCharging) { recharge(env.get("currentCapacity"), delta) } else { discharge(env.get("currentCapacity"), delta) }
+    env.put("currentCapacity", newCharge)
+    onBatteryChangeEvent()
+    now
+}

@@ -184,17 +184,17 @@ if __name__ == '__main__':
     # How to name the summary of the processed data
     pickleOutput = 'data_summary'
     # Experiment prefixes: one per experiment (root of the file name)
-    experiments = ['simulation']
+    experiments = ['export']
     floatPrecision = '{: 0.3f}'
     # Number of time samples 
-    timeSamples = 100
+    timeSamples = 1000
     # time management
     minTime = 0
-    maxTime = 50
+    maxTime = 43000
     timeColumnName = 'time'
     logarithmicTime = False
     # One or more variables are considered random and "flattened"
-    seedVars = ['seed', 'longseed']
+    seedVars = ['seed']
     # Label mapping
     class Measure:
         def __init__(self, description, unit = None):
@@ -230,17 +230,9 @@ if __name__ == '__main__':
         return r'\|' + x + r'\|'
 
     labels = {
-        'nodeCount': Measure(r'$n$', 'nodes'),
-        'harmonicCentrality[Mean]': Measure(f'${expected("H(x)")}$'),
-        'meanNeighbors': Measure(f'${expected(cardinality("N"))}$', 'nodes'),
-        'speed': Measure(r'$\|\vec{v}\|$', r'$m/s$'),
-        'msqer@harmonicCentrality[Max]': Measure(r'$\max{(' + mse(centrality_label) + ')}$'),
-        'msqer@harmonicCentrality[Min]': Measure(r'$\min{(' + mse(centrality_label) + ')}$'),
-        'msqer@harmonicCentrality[Mean]': Measure(f'${expected(mse(centrality_label))}$'),
-        'msqer@harmonicCentrality[StandardDeviation]': Measure(f'${stdev_of(mse(centrality_label))}$'),
-        'org:protelis:tutorial:distanceTo[max]': Measure(r'$m$', 'max distance'),
-        'org:protelis:tutorial:distanceTo[mean]': Measure(r'$m$', 'mean distance'),
-        'org:protelis:tutorial:distanceTo[min]': Measure(r'$m$', ',min distance'),
+        'behaviourInDevice': Measure(r'$n$', 'Behaviour in device'),
+        'currentCapacity': Measure(r'$n$', 'Battery'),
+        'realtimeConsumption': Measure(r'$n$', 'Realtime consumption'),
     }
     def derivativeOrMeasure(variable_name):
         if variable_name.endswith('dt'):

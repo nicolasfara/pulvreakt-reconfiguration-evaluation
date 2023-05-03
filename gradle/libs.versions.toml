@@ -1,14 +1,19 @@
 [versions]
 alchemist = "25.16.1"
 kotlin = "1.8.21"
+pulverization = "0.6.0"
 
 [libraries]
 alchemist = { module = "it.unibo.alchemist:alchemist", version.ref = "alchemist" }
 alchemist-protelis = { module = "it.unibo.alchemist:alchemist-incarnation-protelis", version.ref = "alchemist" }
 alchemist-scafi = { module = "it.unibo.alchemist:alchemist-incarnation-scafi", version.ref = "alchemist" }
+pulverization-core = { module = "it.nicolasfarabegoli.pulverization-framework:core", version.ref = "pulverization" }
+pulverization-platform = { module = "it.nicolasfarabegoli.pulverization-framework:platform", version.ref = "pulverization" }
+kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.7.0-RC" }
 
 [bundles]
 alchemist-protelis = [ "alchemist", "alchemist-protelis" ]
+pulverization = ["pulverization-core", "pulverization-platform"]
 
 [plugins]
 gitSemVer = { id = "org.danilopianini.git-sensitive-semantic-versioning", version = "1.1.9" }
