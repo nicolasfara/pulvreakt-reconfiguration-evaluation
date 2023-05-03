@@ -187,10 +187,10 @@ if __name__ == '__main__':
     experiments = ['export']
     floatPrecision = '{: 0.3f}'
     # Number of time samples 
-    timeSamples = 1000
+    timeSamples = 50
     # time management
     minTime = 0
-    maxTime = 43000
+    maxTime = 2*3600
     timeColumnName = 'time'
     logarithmicTime = False
     # One or more variables are considered random and "flattened"
@@ -230,9 +230,9 @@ if __name__ == '__main__':
         return r'\|' + x + r'\|'
 
     labels = {
-        'behaviourInDevice': Measure(r'$n$', 'Behaviour in device'),
-        'currentCapacity': Measure(r'$n$', 'Battery'),
-        'realtimeConsumption': Measure(r'$n$', 'Realtime consumption'),
+        'realtimeConsumption[sum]': Measure(r'Overall battery consumption', 'mAh'),
+        'device_count': Measure(r'$n$', 'devices'),
+        'behaviour_cost': Measure(r'behavior execution cost', 'mAh'),
     }
     def derivativeOrMeasure(variable_name):
         if variable_name.endswith('dt'):

@@ -23,22 +23,24 @@ variables:
     parameters: [ 5, 5, 50, 2 ]
   behaviour_cost: &behaviour_cost
     type: ArbitraryVariable
-    parameters: [350.0, [350.0, 550.0, 1000.0]]
+    parameters: [3500.0, [3500.0, 5500.0, 10000.0]]
   communication_cost: &communication_cost
     type: ArbitraryVariable
-    parameters: [ 150.0, [ 150.0] ]
+    parameters: [ 150.0, [ 10, 150.0 ] ]
   sensors_cost: &sensors_cost
     type: ArbitraryVariable
-    parameters: [ 75.0, [ 75.0 ] ]
+    parameters: [ 75.0, [ 75.0, 100 ] ]
   intra_comm_cost: &intra_comm_cost
     type: ArbitraryVariable
-    parameters: [ 100.0, [ 100.0 ] ]
-  range: &range
-    type: ArbitraryVariable
-    parameters: [50, [10, 20]]
+    parameters: [ 100.0, [ 100.0, 200 ] ]
+  final_time: &final_time
+    formula: 2 * 60 * 60 # 12h
+#  range: &range
+#    type: ArbitraryVariable
+#    parameters: [50, [10, 20]]
   seed: &seed
     min: 0
-    max: 4
+    max: 1
     step: 1
     default: 0
 
@@ -46,9 +48,9 @@ seeds:
   scenario: *seed
   simulation: *seed
 
-network-model:
-  type: ConnectWithinDistance
-  parameters: [*range]
+#network-model:
+#  type: ConnectWithinDistance
+#  parameters: [*range]
 
 _random-target: &random-target
   - time-distribution: 0.5
@@ -133,14 +135,14 @@ deployments:
 
 terminate:
   - type: AfterTime
-    parameters: 43200 # 12h (43200 seconds)
+    parameters: *final_time # 12h (43200 seconds)
 
 export:
   - type: CSVExporter
     parameters:
       exportPath: "data"
       fileNameRoot: "export"
-      interval: 60
+      interval: 120
     data:
       - type: Time
         parameters:
