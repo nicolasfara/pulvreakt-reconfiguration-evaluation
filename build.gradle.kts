@@ -114,7 +114,7 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
             args(
                 "-e", "data/${it.nameWithoutExtension}",
                 "-b",
-                "-var", "seed", "device_count", "behaviour_cost", "communication_cost", "sensors_cost", "intra_comm_cost",
+                "-var", "seed", "device_count", "high_battery_threshold", "low_battery_threshold", "behaviour_cost",
                 "-p", threadCount,
                 "-i", 1,
             )

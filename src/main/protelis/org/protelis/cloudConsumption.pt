@@ -1,0 +1,17 @@
+module org:protelis:cloudConsumption
+
+// let now = self.getCurrentTime();
+//
+// rep (stillNow <- now) {
+//     let delta = now - stillNow
+//     let instanceConsumption = if (env.get("behaviourInCloud")) { env.get("behaviourDischargeRate") * 2 } else { 0.0 } // TODO(fix formula)
+//     let actualConsumption = instanceConsumption * delta / 3600.0
+//     env.put("cloudConsumption", actualConsumption)
+//     now
+// }
+
+let instanceConsumption = if (env.get("behaviourInCloud")) { env.get("behaviourDischargeRate") * 2 } else { 0.0 } // TODO(fix formula)
+env.put("cloudConsumption", instanceConsumption)
+
+let totalConsumption = instanceConsumption + env.get("batteryConsumption")
+env.put("totalConsumption", totalConsumption)

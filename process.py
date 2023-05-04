@@ -189,7 +189,7 @@ if __name__ == '__main__':
     # Number of time samples 
     timeSamples = 50
     # time management
-    minTime = 0
+    minTime = 121
     maxTime = 2*3600
     timeColumnName = 'time'
     logarithmicTime = False
@@ -230,9 +230,17 @@ if __name__ == '__main__':
         return r'\|' + x + r'\|'
 
     labels = {
-        'realtimeConsumption[sum]': Measure(r'Overall battery consumption', 'mAh'),
+        'behaviourInDevice[sum]': Measure(r'Device Behaviour'),
+        'behaviourInCloud[sum]': Measure(r'Cloud Behaviour'),
+        'batteryPercentage[mean]': Measure(r'Battery', '%'),
+        'batteryConsumption[mean]': Measure(r'Battery consumption', 'mAh'),
+        'cloudConsumption[sum]': Measure(r'Cloud consumption', 'mAh'),
+        'totalConsumption[sum]': Measure(r'Total consumption', 'mAh'),
         'device_count': Measure(r'$n$', 'devices'),
-        'behaviour_cost': Measure(r'behavior execution cost', 'mAh'),
+        'high_battery_threshold': Measure(r'High battery', '%'),
+        'low_battery_threshold': Measure(r'Low battery', '%'),
+#         'behaviour_cost': Measure(r'Behaviour cost', 'mAh'),
+#         'behaviour_cost': Measure(r'behavior execution cost', 'mAh'),
     }
     def derivativeOrMeasure(variable_name):
         if variable_name.endswith('dt'):

@@ -3,5 +3,8 @@ import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.startPulveriza
 
 def randomStartupCharge(maxBatt, minBatt) = (maxBatt - minBatt) * self.nextRandomDouble() + minBatt
 
-env.put("currentCapacity", randomStartupCharge(env.get("batteryCapacity"), env.get("minCapacity")))
+env.put("currentCapacity", randomStartupCharge(env.get("maxBatteryCapacity"), env.get("startupMinCapacity")))
+env.put("personalStartChargeThreshold", randomStartupCharge(0, env.get("personalStartChargeThreshold")))
+env.put("personalStopChargeThreshold", randomStartupCharge(env.get("personalStopChargeThreshold"), 100.0))
+
 startPulverization()

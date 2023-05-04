@@ -12,18 +12,19 @@ def discharge(currentCharge, delta) {
     let intraComponentCommCost = env.get("intraComponentCommCost")
 
     let behaviourInDevice = env.get("behaviourInDevice")
-    let communicationInDevice = env.get("communicationInDevice")
-    let sensorsInDevice = env.get("sensorsInDevice")
 
-    let intraCommCosts = intraComponentCost(behaviourInDevice, communicationInDevice, sensorsInDevice)
+    let intraCommCosts = intraComponentCost(behaviourInDevice, true, true)
     let behaviourCost = if (behaviourInDevice) { behaviourDischargeRate } else { 0.0 }
-    let commCost = if (communicationInDevice) { communicationDischargeRate } else { 0.0 }
-    let sensorsCost = if (sensorsInDevice) { sensorsDischargeRate } else { 0.0 }
 
-    let sumCosts = intraCommCosts + behaviourCost + commCost + sensorsCost;
-    env.put("realtimeConsumption", sumCosts)
+    let sumCosts = intraCommCosts + behaviourCost + communicationDischargeRate + sensorsDischargeRate + random(env.get("defaultDeviceConsumption"));
+    env.put("batteryConsumption", sumCosts)
     let newCharge = currentCharge - (sumCosts * delta / 3600.0)
-    if (newCharge < 0.0) { env.put("isCharging", true); 0.0 } else { newCharge }
+
+    let currentPercentage = toPercentage(newCharge, env.get("maxBatteryCapacity"))
+    if (currentPercentage <= env.get("personalStartChargeThreshold")) {
+        env.put("isCharging", true)
+        toCharge(env.get("personalStartChargeThreshold"), env.get("maxBatteryCapacity"))
+    } else { newCharge }
 }
 
 /**
@@ -39,21 +40,34 @@ def intraComponentCost(bhvLocal, commLocal, sensLocal) {
     }
 }
 
+/**
+ * Recharge the battery of the device
+ */
 def recharge(currentCharge, delta) {
+    env.put("batteryConsumption", 0.0)
     let rechargeRate = env.get("rechargeRate")
     let addingCharge = rechargeRate * delta / 3600.0
     env.put("Recharge: ", addingCharge)
-    if (currentCharge >= env.get("batteryCapacity")) { env.put("isCharging", false); env.get("batteryCapacity") } else { currentCharge + addingCharge }
+    let currentPercentage = toPercentage(currentCharge, env.get("maxBatteryCapacity"))
+    if (currentPercentage >= env.get("personalStopChargeThreshold")) {
+        env.put("isCharging", false)
+        toCharge(env.get("personalStopChargeThreshold"), env.get("maxBatteryCapacity"))
+    } else { currentCharge + addingCharge }
 }
+
+def random(max) = self.nextRandomDouble() * max
+def toPercentage(value, max) = value / max * 100.0
+def toCharge(value, max) = value * max / 100.0
 
 let now = self.getCurrentTime();
 
 rep (still <- now) {
     let delta = now - still
-    env.put("DELTA: ", delta)
     let isCharging = env.get("isCharging")
     let newCharge = if (isCharging) { recharge(env.get("currentCapacity"), delta) } else { discharge(env.get("currentCapacity"), delta) }
     env.put("currentCapacity", newCharge)
+    let percentage = toPercentage(newCharge, env.get("maxBatteryCapacity"))
+    env.put("batteryPercentage", percentage)
     onBatteryChangeEvent()
     now
 }

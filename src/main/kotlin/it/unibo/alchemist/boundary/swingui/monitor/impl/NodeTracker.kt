@@ -12,7 +12,6 @@ import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Actionable
 import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Molecule
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Reaction
@@ -21,7 +20,6 @@ import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.stream.Collectors
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
@@ -34,8 +32,7 @@ import javax.swing.SwingUtilities
  * @param <T> concentration type
 </T></P> */
 @Deprecated("")
-class NodeTracker<T, P : Position<out P>>(node: Node<T>) :
-    JPanel(), OutputMonitor<T, P>, ActionListener {
+class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonitor<T, P>, ActionListener {
     private val txt = JTextArea(AREA_SIZE / 2, AREA_SIZE)
     private val n: Node<T>
     private var stringLength = Byte.MAX_VALUE.toInt()
@@ -75,27 +72,19 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) :
         step: Long,
     ) {
         if (reaction == null || reaction is Reaction<*> && reaction.node == n) {
-            val sb = StringBuilder(stringLength)
-                .append(POSITION)
-                .append('\n')
-                .append(environment.getPosition(n))
-                .append("\n\n\n")
-                .append(CONTENT)
-                .append('\n')
-                .append(
-                    n.contents.entries.stream()
-                        .map { (key, value): Map.Entry<Molecule, T> -> key.name + " > " + value + '\n' }
-                        .sorted()
-                        .collect(Collectors.joining()),
-                )
-                .append("\n\n\n")
-                .append(PROGRAM)
-                .append("\n\n")
-            for (r in n.reactions) {
-                sb.append(r.toString()).append("\n\n")
-            }
-            stringLength = sb.length + MARGIN
-            currentText = sb.toString()
+            val content = """
+            $POSITION
+            ${environment.getPosition(n)}
+
+            $CONTENT
+            ${n.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString("\n")}
+
+            $PROGRAM
+
+            ${n.reactions.joinToString("\n\n") { it.toString() }}
+            """
+            stringLength = content.length + MARGIN
+            currentText = content
             if (!updateIsScheduled.get()) {
                 updateIsScheduled.set(true)
                 scheduleUpdate()

@@ -24,8 +24,13 @@ import it.nicolasfarabegoli.pulverization.runtime.dsl.pulverizationRuntime
 import it.nicolasfarabegoli.pulverization.runtime.reconfiguration.NewConfiguration
 import it.nicolasfarabegoli.pulverization.runtime.reconfiguration.Reconfigurator
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KProperty
 
 object Server : Host {
@@ -44,11 +49,11 @@ object GetMolecule {
 
 val hosts = setOf(Server, Smartphone)
 val behaviourInDevice by GetMolecule
-val communicationInDevice by GetMolecule
-val sensorsInDevice by GetMolecule
+val behaviourInCloud by GetMolecule
 
 suspend fun configureRuntime(
-    reconfigurationEvent: OnLowBattery,
+    lowBatteryEvent: OnLowBattery,
+    highBatteryEvent: OnHighBattery,
 ): DeploymentUnitRuntimeConfiguration<Unit, Int, Int, Unit, Unit> {
     Logger.setMinSeverity(Severity.Error)
     return pulverizationRuntime(systemConfiguration, "smartphone", hosts) {
@@ -67,15 +72,27 @@ suspend fun configureRuntime(
 
         withReconfigurator {
             object : Reconfigurator {
-                override fun receiveReconfiguration(): Flow<NewConfiguration> = emptyFlow()
+                override fun receiveReconfiguration(): Flow<NewConfiguration> =
+                    highBatteryEvent.events
+                        .filter { highBatteryEvent.predicate(it) }
+                        .map { Behaviour to "smartphone" }
+                        .onEach {
+                            highBatteryEvent.node.setConcentration(behaviourInDevice, true)
+                            highBatteryEvent.node.setConcentration(behaviourInCloud, false)
+                        }
                 override suspend fun reconfigure(newConfiguration: NewConfiguration) {
-                    val componentMolecule = when (newConfiguration.first) {
-                        Behaviour -> behaviourInDevice
-                        Communication -> communicationInDevice
-                        Sensors -> sensorsInDevice
-                        else -> error("Invalid component type")
+                    val node = lowBatteryEvent.node
+                    when (newConfiguration.second) {
+                        "smartphone" -> {
+                            node.setConcentration(behaviourInDevice, true)
+                            node.setConcentration(behaviourInCloud, false)
+                        }
+                        "cloud" -> {
+                            node.setConcentration(behaviourInDevice, false)
+                            node.setConcentration(behaviourInCloud, true)
+                        }
+                        else -> error("Unknown host")
                     }
-                    reconfigurationEvent.node.setConcentration(componentMolecule, false)
                 }
             }
         }
@@ -89,7 +106,8 @@ suspend fun configureRuntime(
 
         reconfigurationRules {
             onDevice {
-                reconfigurationEvent reconfigures { Behaviour movesTo Server }
+                lowBatteryEvent reconfigures { Behaviour movesTo Server }
+                highBatteryEvent reconfigures { Behaviour movesTo Smartphone }
             }
         }
     }

@@ -1,6 +1,7 @@
 package it.nicolasfarabegoli.pulverization.interop
 
 import it.nicolasfarabegoli.pulverization.GetMolecule
+import it.nicolasfarabegoli.pulverization.OnHighBattery
 import it.nicolasfarabegoli.pulverization.OnLowBattery
 import it.nicolasfarabegoli.pulverization.configureRuntime
 import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
@@ -17,11 +18,17 @@ object ProtelisInterop {
     @JvmStatic
     fun AlchemistExecutionContext<*>.onBatteryChangeEvent() {
         val device = (deviceUID as ProtelisDevice<*>)
-        val connector = device.node.asProperty<Any, OnLowBattery>()
-        val currentCapacity by GetMolecule
+        val lowBatteryReconfigurator = device.node.asProperty<Any, OnLowBattery>()
+        val highBatteryReconfigurator = device.node.asProperty<Any, OnHighBattery>()
+        val batteryPercentage by GetMolecule
+        val currentCapacityConcentration = device.node.getConcentration(batteryPercentage) as Double
         runBlocking {
-            connector.updateBattery(device.node.getConcentration(currentCapacity) as Double)
-            connector.results.first() // Needed for synchronize Alchemist with the pulverization framework
+            lowBatteryReconfigurator.updateBattery(currentCapacityConcentration)
+            highBatteryReconfigurator.updateBattery(currentCapacityConcentration)
+
+            // Needed for synchronize Alchemist with the pulverization framework
+            highBatteryReconfigurator.results.first()
+            lowBatteryReconfigurator.results.first()
         }
     }
 
@@ -30,9 +37,10 @@ object ProtelisInterop {
         if (this !in initialized) {
             initialized[this] = true
             val device = (deviceUID as ProtelisDevice<*>)
-            val reconfigurationEvent = device.node.asProperty<Any, OnLowBattery>()
+            val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
+            val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
             runBlocking {
-                val config = configureRuntime(reconfigurationEvent)
+                val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
                 val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
                 runtime.start()
             }
