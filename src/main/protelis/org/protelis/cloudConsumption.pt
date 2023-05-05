@@ -1,4 +1,5 @@
 module org:protelis:cloudConsumption
+import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.updateCloudCosts
 
 // let now = self.getCurrentTime();
 //
@@ -15,3 +16,5 @@ env.put("cloudConsumption", instanceConsumption)
 
 let totalConsumption = instanceConsumption + env.get("batteryConsumption")
 env.put("totalConsumption", totalConsumption)
+
+updateCloudCosts()

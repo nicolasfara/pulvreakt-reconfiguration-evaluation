@@ -16,9 +16,26 @@ import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.util.WeakHashMap
+import kotlin.math.ceil
 
 object ProtelisInterop {
     private val initialized: WeakHashMap<AlchemistExecutionContext<*>, Any> = WeakHashMap()
+
+    @JvmStatic
+    fun AlchemistExecutionContext<*>.updateCloudCosts() {
+        val device = (deviceUID as ProtelisDevice<*>)
+        val cloudConsumption by GetMolecule
+        val maxInstancePower by GetMolecule
+        val instanceCost by GetMolecule
+        val cloudCost by GetMolecule
+        val cloudConsumptionValue = device.node.getConcentration(cloudConsumption) as Double
+        val maxInstancePowerValue = device.node.getConcentration(maxInstancePower) as Double
+        val instanceCostValue = device.node.getConcentration(instanceCost) as Double
+
+        val cost = ceil(cloudConsumptionValue / maxInstancePowerValue) * instanceCostValue
+
+        device.node.setConcentration(cloudCost, cost)
+    }
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.onBatteryChangeEvent() {

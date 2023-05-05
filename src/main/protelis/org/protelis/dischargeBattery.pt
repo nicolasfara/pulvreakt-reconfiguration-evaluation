@@ -10,8 +10,8 @@ def mAToW(mA) = mA * 3300 / 3600 // V * A
  */
 def discharge(currentCharge, delta) {
     let behaviourDischargeRate = env.get("behaviourDischargeRate")
-    let communicationDischargeRate = env.get("communicationDischargeRate")
-    let sensorsDischargeRate = env.get("sensorsDischargeRate")
+    let communicationDischargeCost = env.get("communicationDischargeCost")
+    let sensorsDischargeCost = env.get("sensorsDischargeCost")
     let intraComponentCommCost = env.get("intraComponentCommCost")
 
     let behaviourInDevice = env.get("behaviourInDevice")
@@ -19,7 +19,7 @@ def discharge(currentCharge, delta) {
     let intraCommCosts = intraComponentCost(behaviourInDevice, true, true)
     let behaviourCost = if (behaviourInDevice) { behaviourDischargeRate } else { 0.0 }
 
-    let sumCosts = intraCommCosts + behaviourCost + communicationDischargeRate + sensorsDischargeRate + random(env.get("defaultDeviceConsumption"));
+    let sumCosts = intraCommCosts + behaviourCost + communicationDischargeCost + sensorsDischargeCost + random(env.get("defaultDeviceConsumption"));
     env.put("batteryConsumption", mAhToJ(sumCosts) / delta)
     let newCharge = currentCharge - (sumCosts * delta / 3600.0)
 
@@ -66,7 +66,7 @@ let now = self.getCurrentTime();
 rep (still <- now) {
     let delta = now - still
     let isCharging = env.get("isCharging")
-    let newCharge = if (isCharging) {
+    let newCharge = if (isCharging || env.get("currentCapacity") < env.get("personalStartChargeThreshold")) {
         recharge(env.get("currentCapacity"), delta)
     } else {
         discharge(env.get("currentCapacity"), delta)

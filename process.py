@@ -244,6 +244,9 @@ if __name__ == '__main__':
         'device_count': Measure(r'$n$', 'devices'),
         'high_battery_threshold': Measure(r'$\Downarrow^{cloud}_{phone}$', 'battery%'),
         'low_battery_threshold': Measure(r'$\Uparrow^{cloud}_{phone}$', 'battery%'),
+        'instances': Measure(r'$n$', 'EC2 instances'),
+        'cloudCost': Measure(r'Cloud overall cost', '$'),
+        'isCharging[sum]': Measure(r'Devices in charge', r'$\delta$'),
 #         'behaviour_cost': Measure(r'Behaviour cost', 'mAh'),
 #         'behaviour_cost': Measure(r'behavior execution cost', 'mAh'),
     }

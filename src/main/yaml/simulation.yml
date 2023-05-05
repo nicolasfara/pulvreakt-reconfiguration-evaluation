@@ -24,15 +24,6 @@ variables:
   behaviour_cost: &behaviour_cost
     type: ArbitraryVariable
     parameters: [5500.0, [3500.0, 5500.0]]
-#  communication_cost: &communication_cost
-#    type: ArbitraryVariable
-#    parameters: [ 1500.0, [ 10, 150.0 ] ]
-#  sensors_cost: &sensors_cost
-#    type: ArbitraryVariable
-#    parameters: [ 75.0, [ 75.0, 100 ] ]
-#  intra_comm_cost: &intra_comm_cost
-#    type: ArbitraryVariable
-#    parameters: [ 100.0, [ 100.0, 200 ] ]
   low_battery_threshold: &low_battery_threshold
     type: ArbitraryVariable
     parameters: [ 20.0, [ 0.0, 20.0, 40.0 ] ]
@@ -120,7 +111,7 @@ _device: &device
     - molecule: startupMinCapacity
       concentration: 500.0 # The minimum capacity for a battery of a device [mAh]
     - molecule: rechargeRate
-      concentration: 4500.0 # The recharge rate of the battery 1C (recharge rate) [mA]
+      concentration: 4500.0 # The recharge rate of the battery 1C (recharge rate) [mAh]
     - molecule: personalStartChargeThreshold
       concentration: 5.0 # The percentage under which the person will recharge the device. This value is randomized at startup.
     - molecule: personalStopChargeThreshold
@@ -131,9 +122,9 @@ _device: &device
       concentration: *high_battery_threshold # The battery level above which a configuration is triggered [battery %]
     - molecule: behaviourDischargeRate
       concentration: *behaviour_cost # The discharge rate caused by the execution of the _Behaviour_ component in the device [mAh]
-    - molecule: communicationDischargeRate
+    - molecule: communicationDischargeCost
       concentration: 150.0 # *communication_cost # The discharge rate caused by the execution of the _Communication_ component in the device [mAh]
-    - molecule: sensorsDischargeRate
+    - molecule: sensorsDischargeCost
       concentration: 150.0 # *sensors_cost # The discharge rate caused by the execution of the _Sensors_ component in the device [mAh]
     - molecule: intraComponentCommCost
       concentration: 150.0 #*intra_comm_cost # The discharge rate caused by the communication with a remote component (pulverization) [mAh]
@@ -153,6 +144,12 @@ _device: &device
       concentration: 0.0 # The total consumption related to the device. Is the sun of the previous two
     - molecule: defaultDeviceConsumption
       concentration: 100.0 # The maximum consumption of the device NOT related to the application execution
+    - molecule: instanceCost
+      concentration: 0.2 # Cost of the instance of AWS [$/h]
+    - molecule: maxInstancePower
+      concentration: 50000.0 # Max power consumption for cloud instance [W]
+    - molecule: cloudCost
+      concentration: 0.0 # The current cloud cost
 
 deployments:
   - *device
@@ -189,3 +186,9 @@ export:
       - molecule: "totalConsumption"
         aggregators: [ sum ]
         precision: 5
+      - molecule: "isCharging"
+        aggregators: [ sum ]
+        precision: 5
+      - type: it.nicolasfarabegoli.pulverization.interop.CloudCost
+        parameters:
+          precision: 5
