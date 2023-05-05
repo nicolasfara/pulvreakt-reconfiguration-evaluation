@@ -3,6 +3,11 @@ import xarray as xr
 import re
 from pathlib import Path
 import collections
+import fontawesome as fa
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.cm as cmx
+import matplotlib.font_manager as fm
 
 def distance(val, ref):
     return abs(ref - val)
@@ -187,10 +192,10 @@ if __name__ == '__main__':
     experiments = ['export']
     floatPrecision = '{: 0.3f}'
     # Number of time samples 
-    timeSamples = 50
+    timeSamples = 80
     # time management
-    minTime = 121
-    maxTime = 2*3600
+    minTime = 60
+    maxTime = 12 * 3600
     timeColumnName = 'time'
     logarithmicTime = False
     # One or more variables are considered random and "flattened"
@@ -230,15 +235,15 @@ if __name__ == '__main__':
         return r'\|' + x + r'\|'
 
     labels = {
-        'behaviourInDevice[sum]': Measure(r'Device Behaviour'),
-        'behaviourInCloud[sum]': Measure(r'Cloud Behaviour'),
+        'behaviourInDevice[sum]': Measure(r'$\beta_{\Downarrow{}}$', 'devices'),
+        'behaviourInCloud[sum]': Measure(r'$\beta_{\Uparrow{}}$', 'devices'),
         'batteryPercentage[mean]': Measure(r'Battery', '%'),
-        'batteryConsumption[mean]': Measure(r'Battery consumption', 'mAh'),
-        'cloudConsumption[sum]': Measure(r'Cloud consumption', 'mAh'),
-        'totalConsumption[sum]': Measure(r'Total consumption', 'mAh'),
+        'batteryConsumption[sum]': Measure(r'$P_{batt}$', r'$W$'),
+        'cloudConsumption[sum]': Measure(r'$P_{cloud}$', 'to be W'),
+        'totalConsumption[sum]': Measure(r'$P_{total}$', 'to be W'),
         'device_count': Measure(r'$n$', 'devices'),
-        'high_battery_threshold': Measure(r'High battery', '%'),
-        'low_battery_threshold': Measure(r'Low battery', '%'),
+        'high_battery_threshold': Measure(r'$\Downarrow^{cloud}_{phone}$', 'battery%'),
+        'low_battery_threshold': Measure(r'$\Uparrow^{cloud}_{phone}$', 'battery%'),
 #         'behaviour_cost': Measure(r'Behaviour cost', 'mAh'),
 #         'behaviour_cost': Measure(r'behavior execution cost', 'mAh'),
     }
@@ -343,9 +348,6 @@ if __name__ == '__main__':
 
     # QUICK CHARTING
 
-    import matplotlib
-    import matplotlib.pyplot as plt
-    import matplotlib.cm as cmx
     matplotlib.rcParams.update({'axes.titlesize': 12})
     matplotlib.rcParams.update({'axes.labelsize': 10})
     def make_line_chart(xdata, ydata, title = None, ylabel = None, xlabel = None, colors = None, linewidth = 1, errlinewidth = 0.5, figure_size = (6, 4)):
@@ -394,6 +396,7 @@ if __name__ == '__main__':
                                 },
                             )
                             ax.set_xlim(minTime, maxTime)
+                            ax.set_ylim(0, None)
                             ax.legend()
                             fig.tight_layout()
                             by_time_output_directory = f'{output_directory}/{basedir}/{comparison_variable}'
