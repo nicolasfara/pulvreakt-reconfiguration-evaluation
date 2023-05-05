@@ -1,6 +1,9 @@
 module org:protelis:dischargeBattery
 import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.onBatteryChangeEvent
 
+def mAhToJ(mAh) = mAh * 3300 / 3600 // V * A * s
+def mAToW(mA) = mA * 3300 / 3600 // V * A
+
 /**
  * Given the [currentCharge] the function discharge the battery accordingly.
  * @returns the new charge.
@@ -17,7 +20,7 @@ def discharge(currentCharge, delta) {
     let behaviourCost = if (behaviourInDevice) { behaviourDischargeRate } else { 0.0 }
 
     let sumCosts = intraCommCosts + behaviourCost + communicationDischargeRate + sensorsDischargeRate + random(env.get("defaultDeviceConsumption"));
-    env.put("batteryConsumption", sumCosts)
+    env.put("batteryConsumption", mAhToJ(sumCosts) / delta)
     let newCharge = currentCharge - (sumCosts * delta / 3600.0)
 
     let currentPercentage = toPercentage(newCharge, env.get("maxBatteryCapacity"))
@@ -47,7 +50,6 @@ def recharge(currentCharge, delta) {
     env.put("batteryConsumption", 0.0)
     let rechargeRate = env.get("rechargeRate")
     let addingCharge = rechargeRate * delta / 3600.0
-    env.put("Recharge: ", addingCharge)
     let currentPercentage = toPercentage(currentCharge, env.get("maxBatteryCapacity"))
     if (currentPercentage >= env.get("personalStopChargeThreshold")) {
         env.put("isCharging", false)
@@ -64,7 +66,11 @@ let now = self.getCurrentTime();
 rep (still <- now) {
     let delta = now - still
     let isCharging = env.get("isCharging")
-    let newCharge = if (isCharging) { recharge(env.get("currentCapacity"), delta) } else { discharge(env.get("currentCapacity"), delta) }
+    let newCharge = if (isCharging) {
+        recharge(env.get("currentCapacity"), delta)
+    } else {
+        discharge(env.get("currentCapacity"), delta)
+    }
     env.put("currentCapacity", newCharge)
     let percentage = toPercentage(newCharge, env.get("maxBatteryCapacity"))
     env.put("batteryPercentage", percentage)

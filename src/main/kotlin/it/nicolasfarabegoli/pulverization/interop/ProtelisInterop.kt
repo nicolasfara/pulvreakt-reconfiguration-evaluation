@@ -5,8 +5,13 @@ import it.nicolasfarabegoli.pulverization.OnHighBattery
 import it.nicolasfarabegoli.pulverization.OnLowBattery
 import it.nicolasfarabegoli.pulverization.configureRuntime
 import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
+import it.unibo.alchemist.boundary.interfaces.OutputMonitor
+import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
+import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
+import it.unibo.alchemist.model.interfaces.Position
+import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -33,7 +38,7 @@ object ProtelisInterop {
     }
 
     @JvmStatic
-    fun AlchemistExecutionContext<*>.startPulverization() {
+    fun <P : Position<P>> AlchemistExecutionContext<P>.startPulverization() {
         if (this !in initialized) {
             initialized[this] = true
             val device = (deviceUID as ProtelisDevice<*>)
@@ -43,6 +48,16 @@ object ProtelisInterop {
                 val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
                 val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
                 runtime.start()
+                val sim: Simulation<Any, P> = environmentAccess.simulation
+                sim.addOutputMonitor(object : OutputMonitor<Any, P> {
+                    override fun finished(environment: Environment<Any, P>, time: Time, step: Long) {
+                        runBlocking {
+                            runtime.stop()
+                            lowBatteryReconfiguration.close()
+                            highBatteryReconfiguration.close()
+                        }
+                    }
+                })
             }
         }
     }

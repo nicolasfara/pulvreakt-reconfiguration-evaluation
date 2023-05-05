@@ -20,10 +20,10 @@ variables:
   # Simulations variables
   device_count: &device_count
     type: GeometricVariable
-    parameters: [ 5, 5, 50, 2 ]
+    parameters: [ 50, 5, 50, 2 ]
   behaviour_cost: &behaviour_cost
     type: ArbitraryVariable
-    parameters: [3500.0, [3500.0, 5500.0]]
+    parameters: [5500.0, [3500.0, 5500.0]]
 #  communication_cost: &communication_cost
 #    type: ArbitraryVariable
 #    parameters: [ 1500.0, [ 10, 150.0 ] ]
@@ -38,12 +38,12 @@ variables:
     parameters: [ 20.0, [ 0.0, 20.0, 40.0 ] ]
   high_battery_threshold: &high_battery_threshold
     type: ArbitraryVariable
-    parameters: [ 80.0, [ 60.0, 80.0, 100.0 ] ]
+    parameters: [ 100.0, [ 60.0, 80.0, 100.0 ] ]
   final_time: &final_time
-    formula: 2 * 3600 # 12h
+    formula: 12 * 3600 # 12h
   seed: &seed
     min: 0
-    max: 1
+    max: 0
     step: 1
     default: 0
 
@@ -118,13 +118,13 @@ _device: &device
     - molecule: maxBatteryCapacity
       concentration: 4500.0 # The maximum capacity for a battery of a device [mAh]
     - molecule: startupMinCapacity
-      concentration: 2000.0 # The minimum capacity for a battery of a device [mAh]
+      concentration: 500.0 # The minimum capacity for a battery of a device [mAh]
     - molecule: rechargeRate
       concentration: 4500.0 # The recharge rate of the battery 1C (recharge rate) [mA]
     - molecule: personalStartChargeThreshold
-      concentration: 30.0 # The percentage under which the person will recharge the device. This value is randomized at startup.
+      concentration: 5.0 # The percentage under which the person will recharge the device. This value is randomized at startup.
     - molecule: personalStopChargeThreshold
-      concentration: 80.0 # The percentage over which the person will stop recharge the device. This value is randomized at startup.
+      concentration: 50.0 # The percentage over which the person will stop recharge the device. This value is randomized at startup.
     - molecule: lowBatteryReconfiguration
       concentration: *low_battery_threshold # The battery level below which a configuration is triggered [battery %]
     - molecule: highBatteryReconfiguration
@@ -181,7 +181,7 @@ export:
         aggregators: [ mean ]
         precision: 5
       - molecule: "batteryConsumption"
-        aggregators: [ mean ]
+        aggregators: [ sum ]
         precision: 5
       - molecule: "cloudConsumption"
         aggregators: [ sum ]

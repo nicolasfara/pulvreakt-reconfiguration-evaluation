@@ -27,7 +27,7 @@ import javax.swing.ScrollPaneConstants
 import javax.swing.SwingUtilities
 
 /**
- *
+ * @param node the node to track
  * @param <P> position type
  * @param <T> concentration type
 </T></P> */
@@ -41,10 +41,6 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
     @Volatile
     private var currentText: String = ""
 
-    /**
-     * @param node
-     * the node to track
-     */
     init {
         val areaScrollPane = JScrollPane(txt)
         n = node
@@ -65,24 +61,18 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
         stepDone(environment, null, DoubleTime.ZERO, 0L)
     }
 
-    override fun stepDone(
-        environment: Environment<T, P>,
-        reaction: Actionable<T>?,
-        time: Time,
-        step: Long,
-    ) {
+    override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
         if (reaction == null || reaction is Reaction<*> && reaction.node == n) {
             val content = """
-            $POSITION
-            ${environment.getPosition(n)}
-
-            $CONTENT
-            ${n.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString("\n")}
-
-            $PROGRAM
-
-            ${n.reactions.joinToString("\n\n") { it.toString() }}
-            """
+                |$POSITION
+                |${environment.getPosition(n)}
+                |
+                |$CONTENT
+                |${n.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}
+                |
+                |$PROGRAM
+                |${n.reactions.joinToString(System.lineSeparator()) { it.toString() }}
+            """.trimMargin()
             stringLength = content.length + MARGIN
             currentText = content
             if (!updateIsScheduled.get()) {

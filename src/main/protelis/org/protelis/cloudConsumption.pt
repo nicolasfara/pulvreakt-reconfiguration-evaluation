@@ -10,7 +10,7 @@ module org:protelis:cloudConsumption
 //     now
 // }
 
-let instanceConsumption = if (env.get("behaviourInCloud")) { env.get("behaviourDischargeRate") * 2 } else { 0.0 } // TODO(fix formula)
+let instanceConsumption = if (env.get("behaviourInCloud") && !env.get("isCharging")) { env.get("behaviourDischargeRate") * 2 } else { 0.0 } // TODO(fix formula)
 env.put("cloudConsumption", instanceConsumption)
 
 let totalConsumption = instanceConsumption + env.get("batteryConsumption")
