@@ -31,10 +31,10 @@ import javax.swing.SwingUtilities
  * @param <P> position type
  * @param <T> concentration type
 </T></P> */
-@Deprecated("")
+@Deprecated("This class is deprecated anyway")
 class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonitor<T, P>, ActionListener {
-    private val txt = JTextArea(AREA_SIZE / 2, AREA_SIZE)
-    private val n: Node<T>
+    private val jTextArea = JTextArea(AREA_SIZE / 2, AREA_SIZE)
+    private val node: Node<T>
     private var stringLength = Byte.MAX_VALUE.toInt()
     private val updateIsScheduled = AtomicBoolean(false)
 
@@ -42,10 +42,10 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
     private var currentText: String = ""
 
     init {
-        val areaScrollPane = JScrollPane(txt)
-        n = node
+        val areaScrollPane = JScrollPane(jTextArea)
+        this.node = node
         layout = BorderLayout(0, 0)
-        txt.isEditable = false
+        jTextArea.isEditable = false
         add(areaScrollPane, BorderLayout.CENTER)
         areaScrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         areaScrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
@@ -62,16 +62,16 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {
-        if (reaction == null || reaction is Reaction<*> && reaction.node == n) {
+        if (reaction == null || reaction is Reaction<*> && reaction.node == node) {
             val content = """
                 |$POSITION
-                |${environment.getPosition(n)}
+                |${environment.getPosition(node)}
                 |
                 |$CONTENT
-                |${n.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}
+                |${node.contents.map { (k, v) -> "${k.name} -> $v" }.sorted().joinToString(System.lineSeparator())}
                 |
                 |$PROGRAM
-                |${n.reactions.joinToString(System.lineSeparator()) { it.toString() }}
+                |${node.reactions.joinToString(System.lineSeparator()) { it.toString() }}
             """.trimMargin()
             stringLength = content.length + MARGIN
             currentText = content
@@ -85,7 +85,7 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
     private fun scheduleUpdate() {
         SwingUtilities.invokeLater {
             if (updateIsScheduled.getAndSet(false)) {
-                txt.text = currentText
+                jTextArea.text = currentText
             }
         }
     }

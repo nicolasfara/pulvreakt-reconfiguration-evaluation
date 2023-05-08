@@ -11,4 +11,4 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = "alchemist-experiments-bootstrap"
+rootProject.name = "acsos-2023-pulverization-evaluation"
