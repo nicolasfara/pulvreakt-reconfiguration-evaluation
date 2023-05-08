@@ -4,6 +4,14 @@ environment:
   type: OSMEnvironment
   parameters: ["cesena.pbf", true, true]
 
+_constants:
+  device_epi: &device_epi 21.0 # nJ  |--- Ratio: 9.5
+  cloud_epi: &cloud_epi 200.0 # nJ  /
+  comm_instructions: &comm_instruction 10000.0
+  sensors_instructions: &sensors_instructions 20000.0
+  intra_comm_instruction: &intra_comm_instruction 15000.0
+  os_device_instructions: &os_device_instructions 13000.0
+
 variables:
   max_lat: &max_lat
     formula: 44.14795317094557
@@ -21,7 +29,7 @@ variables:
   device_count: &device_count
     type: GeometricVariable
     parameters: [ 50, 5, 50, 2 ]
-  behaviour_cost: &behaviour_cost
+  behaviour_instructions: &behaviour_instructions
     type: ArbitraryVariable
     parameters: [5500.0, [3500.0, 5500.0]]
   low_battery_threshold: &low_battery_threshold
@@ -120,14 +128,14 @@ _device: &device
       concentration: *low_battery_threshold # The battery level below which a configuration is triggered [battery %]
     - molecule: highBatteryReconfiguration
       concentration: *high_battery_threshold # The battery level above which a configuration is triggered [battery %]
-    - molecule: behaviourDischargeRate
-      concentration: *behaviour_cost # The discharge rate caused by the execution of the _Behaviour_ component in the device [mAh]
-    - molecule: communicationDischargeCost
-      concentration: 150.0 # *communication_cost # The discharge rate caused by the execution of the _Communication_ component in the device [mAh]
-    - molecule: sensorsDischargeCost
-      concentration: 150.0 # *sensors_cost # The discharge rate caused by the execution of the _Sensors_ component in the device [mAh]
-    - molecule: intraComponentCommCost
-      concentration: 150.0 #*intra_comm_cost # The discharge rate caused by the communication with a remote component (pulverization) [mAh]
+    - molecule: behaviourInstructions
+      concentration: *behaviour_instructions # The discharge rate caused by the execution of the _Behaviour_ component in the device [mAh]
+    - molecule: communicationInstructions
+      concentration: *comm_instruction # *communication_cost # The discharge rate caused by the execution of the _Communication_ component in the device [mAh]
+    - molecule: sensorsInstructions
+      concentration: *sensors_instructions # *sensors_cost # The discharge rate caused by the execution of the _Sensors_ component in the device [mAh]
+    - molecule: intraCommInstructions
+      concentration: *intra_comm_instruction #*intra_comm_cost # The discharge rate caused by the communication with a remote component (pulverization) [mAh]
     - molecule: behaviourInDevice
       concentration: true # Set to `true` if the _Behaviour_ component is executed in the device
     - molecule: behaviourInCloud
@@ -142,14 +150,18 @@ _device: &device
       concentration: 0.0 # The battery consumption of the device
     - molecule: totalConsumption
       concentration: 0.0 # The total consumption related to the device. Is the sun of the previous two
-    - molecule: defaultDeviceConsumption
-      concentration: 100.0 # The maximum consumption of the device NOT related to the application execution
+    - molecule: osDeviceInstructions
+      concentration: *os_device_instructions # The maximum consumption of the device NOT related to the application execution
     - molecule: instanceCost
       concentration: 0.2 # Cost of the instance of AWS [$/h]
     - molecule: maxInstancePower
       concentration: 50000.0 # Max power consumption for cloud instance [W]
     - molecule: cloudCost
-      concentration: 0.0 # The current cloud cost
+      concentration: 0.0 # The current cloud cost [$]
+    - molecule: deviceEPI
+      concentration: *device_epi # [nJ]
+    - molecule: cloudEPI
+      concentration: *cloud_epi # [nJ]
 
 deployments:
   - *device

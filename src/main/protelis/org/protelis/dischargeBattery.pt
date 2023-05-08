@@ -1,27 +1,40 @@
 module org:protelis:dischargeBattery
 import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.onBatteryChangeEvent
 
-def mAhToJ(mAh) = mAh * 3300 / 3600 // V * A * s
-def mAToW(mA) = mA * 3300 / 3600 // V * A
+def wattToAmpere(watt, volts) = watt / volts
+def jouleToWatt(joule, time) = joule / time
 
 /**
  * Given the [currentCharge] the function discharge the battery accordingly.
  * @returns the new charge.
  */
 def discharge(currentCharge, delta) {
-    let behaviourDischargeRate = env.get("behaviourDischargeRate")
-    let communicationDischargeCost = env.get("communicationDischargeCost")
-    let sensorsDischargeCost = env.get("sensorsDischargeCost")
-    let intraComponentCommCost = env.get("intraComponentCommCost")
+    let deviceEPI = env.get("deviceEPI")
+    let behaviourInstructions = env.get("behaviourInstructions")
+    let communicationInstructions = env.get("communicationInstructions")
+    let sensorsInstructions = env.get("sensorsInstructions")
 
     let behaviourInDevice = env.get("behaviourInDevice")
+    let behaviourJoule = if (behaviourInDevice) { deviceEPI * behaviourInstructions } else { 0.0 }
+    let behaviourWatt = jouleToWatt(behaviourJoule, delta)
 
-    let intraCommCosts = intraComponentCost(behaviourInDevice, true, true)
-    let behaviourCost = if (behaviourInDevice) { behaviourDischargeRate } else { 0.0 }
+    let communicationJoule = communicationInstructions * deviceEPI
+    let communicationWatt = jouleToWatt(communicationJoule, delta)
 
-    let sumCosts = intraCommCosts + behaviourCost + communicationDischargeCost + sensorsDischargeCost + random(env.get("defaultDeviceConsumption"));
-    env.put("batteryConsumption", mAhToJ(sumCosts) / delta)
-    let newCharge = currentCharge - (sumCosts * delta / 3600.0)
+    let sensorsJoule = sensorsInstructions * deviceEPI
+    let sensorsWatt = jouleToWatt(sensorsJoule, delta)
+
+    let intraCommJoule = intraCommEnergy(behaviourInDevice, true, true)
+    let intraCommWatt = jouleToWatt(intraCommJoule, delta)
+
+    let osJoule = random(env.get("osDeviceInstructions")) * deviceEPI
+    let osWatt = jouleToWatt(osJoule, delta)
+
+    let totalWatt = behaviourWatt + communicationWatt + sensorsWatt + intraCommWatt + osWatt
+    let totalMilliAmpere = wattToAmpere(totalWatt, 3.3) * 1000.0 // 3.3 Volts of the battery device
+
+    env.put("batteryConsumption", totalWatt)
+    let newCharge = currentCharge - (totalMilliAmpere * delta / 3600.0)
 
     let currentPercentage = toPercentage(newCharge, env.get("maxBatteryCapacity"))
     if (currentPercentage <= env.get("personalStartChargeThreshold")) {
@@ -34,13 +47,15 @@ def discharge(currentCharge, delta) {
  * Determines the communication cost based on the local active components.
  * @returns the cost for the communication between (remote) components.
  */
-def intraComponentCost(bhvLocal, commLocal, sensLocal) {
-    let intraComponentCommCost = env.get("intraComponentCommCost")
-    if (bhvLocal) {
-        if (!commLocal) { intraComponentCommCost } else { 0.0 } + if (!sensLocal) { intraComponentCommCost } else { 0.0 }
+def intraCommEnergy(bhvLocal, commLocal, sensLocal) {
+    let intraCommInstructions = env.get("intraCommInstructions")
+    let deviceEPI = env.get("deviceEPI")
+    let instructions = if (bhvLocal) {
+        if (!commLocal) { intraCommInstructions } else { 0.0 } + if (!sensLocal) { intraCommInstructions } else { 0.0 }
     } else {
-        if (commLocal) { intraComponentCommCost } else { 0.0 } + if (sensLocal) { intraComponentCommCost } else { 0.0 }
+        if (commLocal) { intraCommInstructions } else { 0.0 } + if (sensLocal) { intraCommInstructions } else { 0.0 }
     }
+    instructions * deviceEPI
 }
 
 /**
