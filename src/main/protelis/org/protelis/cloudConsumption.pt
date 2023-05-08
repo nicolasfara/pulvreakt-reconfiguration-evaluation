@@ -4,9 +4,9 @@ import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.updateCloudCos
 def jouleToWatt(joule, time) = joule / time
 
 def calculateCloudConsumption(delta) {
-    let cloudEPI = env.get("cloudEPI")
-    let behaviourInstructions = env.get("behaviourInstructions")
-    let intraCommInstructions = env.get("intraCommInstructions")
+    let cloudEPI = env.get("cloudEPI") / 1000000000
+    let behaviourInstructions = env.get("behaviourInstructions") * 1000000
+    let intraCommInstructions = env.get("intraCommInstructions") * 1000000
     let behaviourInCloud = env.get("behaviourInCloud")
 
     let cloudJoule = (behaviourInstructions * cloudEPI) + (intraCommInstructions * cloudEPI)
@@ -19,7 +19,7 @@ let now = self.getCurrentTime();
 
 rep (stillNow <- now) {
     let delta = now - stillNow
-    let actualCloudConsumption = calculateCloudConsumption(delta)
+    let actualCloudConsumption = if (delta > 0.0) { calculateCloudConsumption(delta) } else { 0.0 }
     env.put("cloudConsumption", actualCloudConsumption)
 
     let totalConsumption = actualCloudConsumption + env.get("batteryConsumption")

@@ -5,12 +5,16 @@ environment:
   parameters: ["cesena.pbf", true, true]
 
 _constants:
-  device_epi: &device_epi 21.0 # nJ  |--- Ratio: 9.5
-  cloud_epi: &cloud_epi 200.0 # nJ  /
-  comm_instructions: &comm_instruction 10000.0
-  sensors_instructions: &sensors_instructions 20000.0
-  intra_comm_instruction: &intra_comm_instruction 15000.0
-  os_device_instructions: &os_device_instructions 13000.0
+  comm_instructions: &comm_instruction 0 # Mega Instructions
+  sensors_instructions: &sensors_instructions 0 # Mega Instructions
+  intra_comm_instruction: &intra_comm_instruction 0 # Mega Instructions
+  os_device_instructions: &os_device_instructions 0 # Mega Instructions
+  max_instance_power: &max_instance_power 200.0 # [W]
+  max_battery_capacity: &max_battery_capacity 4500.0 # [mAh]
+  startup_min_capacity: &startup_min_capacity 500.0 # [mAh]
+  recharge_rate: &recharge_rate 4500.0 # [mAh]
+  personal_start_charge_threshold: &personal_start_charge_threshold 5.0 # [%]
+  personal_stop_charge_threshold: &personal_stop_charge_threshold 50.0 # [%]
 
 variables:
   max_lat: &max_lat
@@ -28,21 +32,31 @@ variables:
   # Simulations variables
   device_count: &device_count
     type: GeometricVariable
-    parameters: [ 50, 5, 50, 2 ]
-  behaviour_instructions: &behaviour_instructions
+    parameters: [ 10, 10, 1000, 5 ]
+  battery_discharge_time: # [hours]
     type: ArbitraryVariable
-    parameters: [5500.0, [3500.0, 5500.0]]
-  low_battery_threshold: &low_battery_threshold
+    parameters: [1.5, [1.5, 3, 6, 12, 24 ] ]
+  epi_ratio:
+    type: ArbitraryVariable
+    parameters: [10, [ 3, 10, 30 ] ]
+  cloud_epi: &cloud_epi # [nJ]
+    type: ArbitraryVariable
+    parameters: [300, [3, 100, 200, 300 ] ]
+  device_epi: &device_epi # [nJ]
+    formula: cloud_epi / epi_ratio
+  behaviour_instructions: &behaviour_instructions
+    formula: (14.85 / battery_discharge_time) / (device_epi / 1000.0) # the [/ 1000.0] is a hack to convert to Millions of instruction
+  low_battery_threshold: &low_battery_threshold # [%]
     type: ArbitraryVariable
     parameters: [ 20.0, [ 0.0, 20.0, 40.0 ] ]
-  high_battery_threshold: &high_battery_threshold
+  high_battery_threshold: &high_battery_threshold # [%]
     type: ArbitraryVariable
-    parameters: [ 100.0, [ 60.0, 80.0, 100.0 ] ]
+    parameters: [ 80.0, [ 60.0, 80.0, 100.0 ] ]
   final_time: &final_time
     formula: 12 * 3600 # 12h
   seed: &seed
     min: 0
-    max: 0
+    max: 0 # 9
     step: 1
     default: 0
 
@@ -77,7 +91,7 @@ _moving-policy: &moving-policy
 
 _move: &move
   - type: Event
-    time-distribution: 1.0
+    time-distribution: 0.1
     actions:
       - type: TargetMapWalker
         parameters: [target, 1.4]
@@ -115,15 +129,15 @@ _device: &device
     - molecule: currentCapacity
       concentration: 4500.0 # The actual battery capacity. This value is randomized in setupDevice.pt
     - molecule: maxBatteryCapacity
-      concentration: 4500.0 # The maximum capacity for a battery of a device [mAh]
+      concentration: *max_battery_capacity # The maximum capacity for a battery of a device [mAh]
     - molecule: startupMinCapacity
-      concentration: 500.0 # The minimum capacity for a battery of a device [mAh]
+      concentration: *startup_min_capacity # The minimum capacity for a battery of a device [mAh]
     - molecule: rechargeRate
-      concentration: 4500.0 # The recharge rate of the battery 1C (recharge rate) [mAh]
+      concentration: *recharge_rate # The recharge rate of the battery 1C (recharge rate) [mAh]
     - molecule: personalStartChargeThreshold
-      concentration: 5.0 # The percentage under which the person will recharge the device. This value is randomized at startup.
+      concentration: *personal_start_charge_threshold # The percentage under which the person will recharge the device. This value is randomized at startup.
     - molecule: personalStopChargeThreshold
-      concentration: 50.0 # The percentage over which the person will stop recharge the device. This value is randomized at startup.
+      concentration: *personal_stop_charge_threshold # The percentage over which the person will stop recharge the device. This value is randomized at startup.
     - molecule: lowBatteryReconfiguration
       concentration: *low_battery_threshold # The battery level below which a configuration is triggered [battery %]
     - molecule: highBatteryReconfiguration
@@ -155,7 +169,7 @@ _device: &device
     - molecule: instanceCost
       concentration: 0.2 # Cost of the instance of AWS [$/h]
     - molecule: maxInstancePower
-      concentration: 50000.0 # Max power consumption for cloud instance [W]
+      concentration: *max_instance_power # Max power consumption for cloud instance [W]
     - molecule: cloudCost
       concentration: 0.0 # The current cloud cost [$]
     - molecule: deviceEPI

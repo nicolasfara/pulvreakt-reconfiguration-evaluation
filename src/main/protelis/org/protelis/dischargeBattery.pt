@@ -9,10 +9,10 @@ def jouleToWatt(joule, time) = joule / time
  * @returns the new charge.
  */
 def discharge(currentCharge, delta) {
-    let deviceEPI = env.get("deviceEPI")
-    let behaviourInstructions = env.get("behaviourInstructions")
-    let communicationInstructions = env.get("communicationInstructions")
-    let sensorsInstructions = env.get("sensorsInstructions")
+    let deviceEPI = env.get("deviceEPI") / 1000000000.0
+    let behaviourInstructions = env.get("behaviourInstructions") * 1000000
+    let communicationInstructions = env.get("communicationInstructions") * 1000000
+    let sensorsInstructions = env.get("sensorsInstructions") * 1000000
 
     let behaviourInDevice = env.get("behaviourInDevice")
     let behaviourJoule = if (behaviourInDevice) { deviceEPI * behaviourInstructions } else { 0.0 }
@@ -48,8 +48,8 @@ def discharge(currentCharge, delta) {
  * @returns the cost for the communication between (remote) components.
  */
 def intraCommEnergy(bhvLocal, commLocal, sensLocal) {
-    let intraCommInstructions = env.get("intraCommInstructions")
-    let deviceEPI = env.get("deviceEPI")
+    let intraCommInstructions = env.get("intraCommInstructions") * 1000000
+    let deviceEPI = env.get("deviceEPI") / 1000000000.0
     let instructions = if (bhvLocal) {
         if (!commLocal) { intraCommInstructions } else { 0.0 } + if (!sensLocal) { intraCommInstructions } else { 0.0 }
     } else {
@@ -81,10 +81,11 @@ let now = self.getCurrentTime();
 rep (still <- now) {
     let delta = now - still
     let isCharging = env.get("isCharging")
-    let newCharge = if (isCharging || env.get("currentCapacity") < env.get("personalStartChargeThreshold")) {
-        recharge(env.get("currentCapacity"), delta)
+    let currentCapacity = env.get("currentCapacity")
+    let newCharge = if (isCharging || currentCapacity < env.get("personalStartChargeThreshold")) {
+        recharge(currentCapacity, delta)
     } else {
-        discharge(env.get("currentCapacity"), delta)
+        if (delta > 0.0) { discharge(env.get("currentCapacity"), delta) } else { currentCapacity }
     }
     env.put("currentCapacity", newCharge)
     let percentage = toPercentage(newCharge, env.get("maxBatteryCapacity"))
