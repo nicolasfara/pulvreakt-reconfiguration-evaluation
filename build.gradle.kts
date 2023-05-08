@@ -43,9 +43,9 @@ dependencies {
     implementation(libs.bundles.alchemist.protelis)
     implementation(libs.bundles.pulverization)
     implementation(libs.kotlinx.coroutine)
-    if (!GraphicsEnvironment.isHeadless()) {
+//    if (!GraphicsEnvironment.isHeadless()) {
         implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
-    }
+//    }
 }
 
 // Heap size estimation for batches
@@ -114,7 +114,7 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
             args(
                 "-e", "data/${it.nameWithoutExtension}",
                 "-b",
-                "-var", "seed", "device_count", "high_battery_threshold", "low_battery_threshold", "behaviour_cost",
+                "-var", "seed", "behaviour_instructions", "cloud_epi", "device_epi", "low_battery_threshold", "high_battery_threshold",
                 "-p", threadCount,
                 "-i", 1,
             )
