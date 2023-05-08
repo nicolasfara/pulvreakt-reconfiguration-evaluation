@@ -3,7 +3,6 @@ import xarray as xr
 import re
 from pathlib import Path
 import collections
-import fontawesome as fa
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cmx
