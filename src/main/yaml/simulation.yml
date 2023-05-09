@@ -35,17 +35,18 @@ variables:
     parameters: [ 10, 10, 1000, 5 ]
   battery_discharge_time: # [hours]
     type: ArbitraryVariable
-    parameters: [1.5, [1.5, 3, 6, 12, 24 ] ]
+    parameters: [3, [1.5, 3, 6, 12, 24 ] ]
   epi_ratio:
     type: ArbitraryVariable
     parameters: [10, [ 3, 10, 30 ] ]
   cloud_epi: &cloud_epi # [nJ]
     type: ArbitraryVariable
-    parameters: [300, [3, 100, 200, 300 ] ]
+    parameters: [3, [3, 100, 200, 300 ] ]
   device_epi: &device_epi # [nJ]
     formula: cloud_epi / epi_ratio
   behaviour_instructions: &behaviour_instructions
-    formula: (14.85 / battery_discharge_time) / (device_epi / 1000.0) # the [/ 1000.0] is a hack to convert to Millions of instruction
+    formula: String.format("%.12f", (14.85 / battery_discharge_time) / (device_epi / 1000.0)) # the [/ 1000.0] is a hack to convert to Millions of instruction
+    # formula: (14.85 / battery_discharge_time) / (device_epi / 1000.0) # the [/ 1000.0] is a hack to convert to Millions of instruction
   low_battery_threshold: &low_battery_threshold # [%]
     type: ArbitraryVariable
     parameters: [ 20.0, [ 0.0, 20.0, 40.0 ] ]
