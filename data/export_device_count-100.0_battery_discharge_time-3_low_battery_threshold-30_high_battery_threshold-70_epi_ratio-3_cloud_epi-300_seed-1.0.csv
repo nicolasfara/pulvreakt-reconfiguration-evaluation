@@ -1,0 +1,10 @@
+#####################################################################
+# Alchemist log file - simulation started at: 2023-05-10T09:19+0000 #
+#####################################################################
+#
+# device_count = 100.0, battery_discharge_time = 3, low_battery_threshold = 30, high_battery_threshold = 70, epi_ratio = 3, cloud_epi = 300, seed = 1.0
+#
+# The columns have the following meaning: 
+# time behaviourInDevice[sum] behaviourInCloud[sum] batteryPercentage[mean] batteryConsumption[sum] cloudConsumption[sum] totalConsumption[sum] isCharging[sum] cloudCost instances 
+0.0000 100.00 0.0000 100.00 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+0.0000 100.00 0.0000 100.00 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
