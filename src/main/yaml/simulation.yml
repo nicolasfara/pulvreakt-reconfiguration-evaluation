@@ -5,10 +5,10 @@ environment:
   parameters: ["cesena.pbf", true, true]
 
 _constants:
-  comm_instructions: &comm_instruction 0 # Mega Instructions
-  sensors_instructions: &sensors_instructions 0 # Mega Instructions
-  intra_comm_instruction: &intra_comm_instruction 0 # Mega Instructions
-  os_device_instructions: &os_device_instructions 0 # Mega Instructions
+  comm_instructions: &comm_instruction 0.02 # Mega Instructions
+  sensors_instructions: &sensors_instructions 0.01 # Mega Instructions
+  intra_comm_instruction: &intra_comm_instruction 0.02 # Mega Instructions
+  os_device_instructions: &os_device_instructions 0.005 # Mega Instructions
   max_instance_power: &max_instance_power 200.0 # [W]
   max_battery_capacity: &max_battery_capacity 4500.0 # [mAh]
   startup_min_capacity: &startup_min_capacity 500.0 # [mAh]
@@ -114,6 +114,7 @@ _device: &device
   properties:
     - type: it.nicolasfarabegoli.pulverization.OnLowBattery
     - type: it.nicolasfarabegoli.pulverization.OnHighBattery
+    - type: it.nicolasfarabegoli.pulverization.DischargeBattery
   contents:
     - molecule: minLon
       concentration: *min_lon

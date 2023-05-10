@@ -1,9 +1,6 @@
 package it.nicolasfarabegoli.pulverization.interop
 
-import it.nicolasfarabegoli.pulverization.GetMolecule
-import it.nicolasfarabegoli.pulverization.OnHighBattery
-import it.nicolasfarabegoli.pulverization.OnLowBattery
-import it.nicolasfarabegoli.pulverization.configureRuntime
+import it.nicolasfarabegoli.pulverization.*
 import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.interfaces.Simulation
@@ -20,6 +17,13 @@ import kotlin.math.ceil
 
 object ProtelisInterop {
     private val initialized: WeakHashMap<AlchemistExecutionContext<*>, Any> = WeakHashMap()
+
+    @JvmStatic
+    fun AlchemistExecutionContext<*>.manageBattery() {
+        val device = (deviceUID as ProtelisDevice<*>)
+        val batteryManager = device.node.asProperty<Any, DischargeBattery>()
+        batteryManager.manageDeviceBattery()
+    }
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.updateCloudCosts() {
