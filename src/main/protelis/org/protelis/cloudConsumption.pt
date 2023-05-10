@@ -9,7 +9,7 @@ def calculateCloudConsumption(delta) {
     let intraCommInstructions = env.get("intraCommInstructions") * 1000000
     let behaviourInCloud = env.get("behaviourInCloud")
 
-    let cloudJoule = (behaviourInstructions * cloudEPI) + (intraCommInstructions * cloudEPI)
+    let cloudJoule = (behaviourInstructions * cloudEPI * delta) + (intraCommInstructions * cloudEPI * delta)
     let cloudWatt = jouleToWatt(cloudJoule, delta)
 
     if (behaviourInCloud) { cloudWatt } else { 0.0 }

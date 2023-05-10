@@ -39,6 +39,8 @@ data class DischargeBattery(
     private val rechargeRateValue: Double by lazy { node.getConcentration(rechargeRate) as Double }
 
     private var prevTime = 0.0
+    private var restoreInDevice = true
+    private var restoreInCloud = false
 
     fun manageDeviceBattery() {
         val now = ec.simulation.time.toDouble()
@@ -47,6 +49,8 @@ data class DischargeBattery(
         val isChargingValue = node.getConcentration(isCharging) as Boolean
         val currentCapacityValue = node.getConcentration(currentCapacity) as Double
         val newCharge = if (isChargingValue) {
+            restoreInDevice = node.getConcentration(behaviourInDevice) as Boolean
+            restoreInCloud = node.getConcentration(behaviourInCloud) as Boolean
             recharge(currentCapacityValue, delta)
         } else {
             if (delta > 0.0) { discharge(currentCapacityValue, delta) } else { currentCapacityValue }
@@ -89,10 +93,14 @@ data class DischargeBattery(
 
     private fun recharge(currentCharge: Double, delta: Double): Double {
         node.setConcentration(batteryConsumption, 0.0)
+        node.setConcentration(behaviourInDevice, false)
+        node.setConcentration(behaviourInCloud, false)
         val addingCharge = rechargeRateValue * delta / 3600.0
         val currentPercentage = currentCharge.toPercentage(maxBatteryCapacityValue)
         return if (currentPercentage >= personalStopChargeThresholdValue) {
             node.setConcentration(isCharging, false)
+            node.setConcentration(behaviourInDevice, restoreInDevice)
+            node.setConcentration(behaviourInCloud, restoreInCloud)
             personalStopChargeThresholdValue.toCharge(maxBatteryCapacityValue)
         } else { currentCharge + addingCharge }
     }
