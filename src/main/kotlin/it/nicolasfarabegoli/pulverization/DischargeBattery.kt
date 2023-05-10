@@ -3,10 +3,8 @@ package it.nicolasfarabegoli.pulverization
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.protelis.vm.ExecutionContext
 import kotlin.random.Random
 
 data class DischargeBattery(
@@ -62,17 +60,17 @@ data class DischargeBattery(
     private fun discharge(currentValue: Double, delta: Double): Double {
         val behaviourInDevice = node.getConcentration(behaviourInDevice) as Boolean
         val behaviourJoule = if (behaviourInDevice) {
-            deviceEPIValue * behaviourInstructionsValue
-        } else { deviceEPIValue * intraCommInstructionsValue }
+            deviceEPIValue * behaviourInstructionsValue * delta
+        } else { deviceEPIValue * intraCommInstructionsValue * delta }
         val behaviourWatt = behaviourJoule.toWatt(delta)
 
-        val communicationJoule = deviceEPIValue * communicationInstructionsValue
+        val communicationJoule = deviceEPIValue * communicationInstructionsValue * delta
         val communicationWatt = communicationJoule.toWatt(delta)
 
-        val sensorsJoule = deviceEPIValue * sensorsInstructionsValue
+        val sensorsJoule = deviceEPIValue * sensorsInstructionsValue * delta
         val sensorsWatt = sensorsJoule.toWatt(delta)
 
-        val osJoule = Random.nextDouble(osDeviceInstructionsValue) * deviceEPIValue
+        val osJoule = Random.nextDouble(osDeviceInstructionsValue) * deviceEPIValue * delta
         val osWatt = osJoule.toWatt(delta)
 
         val totalWatt = behaviourWatt + communicationWatt + sensorsWatt + osWatt
