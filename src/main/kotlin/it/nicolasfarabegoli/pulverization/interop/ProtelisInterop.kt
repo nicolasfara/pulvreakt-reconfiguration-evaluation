@@ -17,12 +17,13 @@ import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import java.util.Collections
 import java.util.WeakHashMap
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
-    private val initialized: WeakHashMap<AlchemistExecutionContext<*>, Any> = WeakHashMap()
+    private val initialized = Collections.synchronizedMap(WeakHashMap<AlchemistExecutionContext<*>, Any>())
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.manageBattery() {
