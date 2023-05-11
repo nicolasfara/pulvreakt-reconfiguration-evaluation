@@ -59,11 +59,9 @@ object ProtelisInterop {
             lowBatteryReconfigurator.updateBattery(currentCapacityConcentration)
             highBatteryReconfigurator.updateBattery(currentCapacityConcentration)
 
-            withTimeoutOrNull(100.milliseconds) {
-                // Needed for synchronize Alchemist with the pulverization framework
-                highBatteryReconfigurator.results.first()
-                lowBatteryReconfigurator.results.first()
-            }
+            // Needed for synchronize Alchemist with the pulverization framework
+            highBatteryReconfigurator.results.first()
+            lowBatteryReconfigurator.results.first()
         }
     }
 
