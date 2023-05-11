@@ -48,7 +48,7 @@ dependencies {
 }
 
 // Heap size estimation for batches
-val maxHeap: Long? by project
+val maxHeap: Long? = 220000
 val heap: Long = maxHeap ?: if (System.getProperty("os.name").lowercase().contains("linux")) {
     ByteArrayOutputStream().use { output ->
         exec {
@@ -108,7 +108,7 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
         runAllGraphic.dependsOn(graphic)
         val batch by basetask("run${capitalizedName}Batch") {
             description = "Launches batch experiments for $capitalizedName"
-            maxHeapSize = "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
+            maxHeapSize = "220g"// "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
             File("data").mkdirs()
             val variablesUnderTest = arrayOf(
                 "seed",
