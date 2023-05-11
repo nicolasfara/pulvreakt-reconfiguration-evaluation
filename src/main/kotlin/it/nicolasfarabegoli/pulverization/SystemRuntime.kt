@@ -10,9 +10,7 @@ import it.nicolasfarabegoli.pulverization.components.deviceSensorsLogic
 import it.nicolasfarabegoli.pulverization.components.deviceSmartphoneBehaviour
 import it.nicolasfarabegoli.pulverization.dsl.model.Behaviour
 import it.nicolasfarabegoli.pulverization.dsl.model.Capability
-import it.nicolasfarabegoli.pulverization.dsl.model.Communication
 import it.nicolasfarabegoli.pulverization.dsl.model.ComponentType
-import it.nicolasfarabegoli.pulverization.dsl.model.Sensors
 import it.nicolasfarabegoli.pulverization.runtime.communication.Binding
 import it.nicolasfarabegoli.pulverization.runtime.communication.Communicator
 import it.nicolasfarabegoli.pulverization.runtime.communication.RemotePlace
@@ -24,11 +22,9 @@ import it.nicolasfarabegoli.pulverization.runtime.dsl.pulverizationRuntime
 import it.nicolasfarabegoli.pulverization.runtime.reconfiguration.NewConfiguration
 import it.nicolasfarabegoli.pulverization.runtime.reconfiguration.Reconfigurator
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlin.reflect.KProperty

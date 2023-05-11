@@ -1,6 +1,10 @@
 package it.nicolasfarabegoli.pulverization.interop
 
-import it.nicolasfarabegoli.pulverization.*
+import it.nicolasfarabegoli.pulverization.DischargeBattery
+import it.nicolasfarabegoli.pulverization.GetMolecule
+import it.nicolasfarabegoli.pulverization.OnHighBattery
+import it.nicolasfarabegoli.pulverization.OnLowBattery
+import it.nicolasfarabegoli.pulverization.configureRuntime
 import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.interfaces.Simulation
@@ -12,8 +16,10 @@ import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.WeakHashMap
 import kotlin.math.ceil
+import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
     private val initialized: WeakHashMap<AlchemistExecutionContext<*>, Any> = WeakHashMap()
@@ -52,9 +58,11 @@ object ProtelisInterop {
             lowBatteryReconfigurator.updateBattery(currentCapacityConcentration)
             highBatteryReconfigurator.updateBattery(currentCapacityConcentration)
 
-            // Needed for synchronize Alchemist with the pulverization framework
-            highBatteryReconfigurator.results.first()
-            lowBatteryReconfigurator.results.first()
+            withTimeoutOrNull(100.milliseconds) {
+                // Needed for synchronize Alchemist with the pulverization framework
+                highBatteryReconfigurator.results.first()
+                lowBatteryReconfigurator.results.first()
+            }
         }
     }
 
