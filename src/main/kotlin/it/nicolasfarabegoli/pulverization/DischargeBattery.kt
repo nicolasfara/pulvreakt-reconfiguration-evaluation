@@ -39,6 +39,7 @@ data class DischargeBattery(
     private val rechargeRateValue: Double by lazy { node.getConcentration(rechargeRate) as Double }
 
     private var prevTime = 0.0
+    private var isFirstCharge = true
     private var restoreInDevice = true
     private var restoreInCloud = false
 
@@ -49,10 +50,14 @@ data class DischargeBattery(
         val isChargingValue = node.getConcentration(isCharging) as Boolean
         val currentCapacityValue = node.getConcentration(currentCapacity) as Double
         val newCharge = if (isChargingValue) {
-            restoreInDevice = node.getConcentration(behaviourInDevice) as Boolean
-            restoreInCloud = node.getConcentration(behaviourInCloud) as Boolean
+            if (isFirstCharge) {
+                restoreInDevice = node.getConcentration(behaviourInDevice) as Boolean
+                restoreInCloud = node.getConcentration(behaviourInCloud) as Boolean
+            }
+            isFirstCharge = false
             recharge(currentCapacityValue, delta)
         } else {
+            isFirstCharge = true
             if (delta > 0.0) { discharge(currentCapacityValue, delta) } else { currentCapacityValue }
         }
         node.setConcentration(currentCapacity, newCharge)

@@ -5,10 +5,6 @@ environment:
   parameters: ["cesena.pbf", true, true]
 
 _constants:
-  comm_instructions: &comm_instruction 1 # Mega Instructions
-  sensors_instructions: &sensors_instructions 2 # Mega Instructions
-  intra_comm_instruction: &intra_comm_instruction 1 # Mega Instructions
-  os_device_instructions: &os_device_instructions 0.5 # Mega Instructions
   max_instance_power: &max_instance_power 200.0 # [W]
   max_battery_capacity: &max_battery_capacity 4500.0 # [mAh]
   startup_min_capacity: &startup_min_capacity 500.0 # [mAh]
@@ -51,8 +47,16 @@ variables:
   device_epi: &device_epi # [nJ]
     formula: cloud_epi / epi_ratio
   behaviour_instructions: &behaviour_instructions
-    formula: String.format("%.12f", (14.85 / battery_discharge_time) / (device_epi / 1000.0) - 4.5) # the [/ 1000.0] is a hack to convert to Millions of instruction
+    formula: String.format("%.12f", (14.85 / battery_discharge_time) / (device_epi / 1000.0) / 2) # the [/ 1000.0] is a hack to convert to Millions of instruction (the /2 means the behaviour is always half of the consumption)
     # formula: (14.85 / battery_discharge_time) / (device_epi / 1000.0) # the [/ 1000.0] is a hack to convert to Millions of instruction
+  comm_instructions: &comm_instruction
+    formula: String.format("%.12f", (behaviour_instructions.toDouble() / 4))
+  sensors_instructions: &sensors_instructions
+    formula: String.format("%.12f", (behaviour_instructions.toDouble() / 4))
+  intra_comm_instruction: &intra_comm_instruction
+    formula: String.format("%.12f", (behaviour_instructions.toDouble() / 4))
+  os_device_instructions: &os_device_instructions
+    formula: String.format("%.12f", (behaviour_instructions.toDouble() / 4))
   final_time: &final_time
     formula: 12 * 3600 # 12h
   seed: &seed
