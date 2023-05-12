@@ -18,12 +18,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Collections
+import java.util.LinkedHashSet
 import java.util.WeakHashMap
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
-    private val initialized = Collections.synchronizedMap(WeakHashMap<AlchemistExecutionContext<*>, Any>())
+    private val initialized = LinkedHashSet<Any>()
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.manageBattery() {
@@ -67,25 +68,29 @@ object ProtelisInterop {
 
     @JvmStatic
     fun <P : Position<P>> AlchemistExecutionContext<P>.startPulverization() {
-        if (this !in initialized) {
-            initialized[this] = true
-            val device = (deviceUID as ProtelisDevice<*>)
-            val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
-            val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
-            runBlocking {
-                val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
-                val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
-                runtime.start()
-                val sim: Simulation<Any, P> = environmentAccess.simulation
-                sim.addOutputMonitor(object : OutputMonitor<Any, P> {
-                    override fun finished(environment: Environment<Any, P>, time: Time, step: Long) {
-                        runBlocking {
-                            runtime.stop()
-                            lowBatteryReconfiguration.close()
-                            highBatteryReconfiguration.close()
+        synchronized(initialized) {
+            if (this !in initialized) {
+                check(initialized.add(System.identityHashCode(this))) {
+                    "DUPLICATE MEMORY POINTER @${System.identityHashCode(this)}!!!!"
+                }
+                val device = (deviceUID as ProtelisDevice<*>)
+                val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
+                val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
+                runBlocking {
+                    val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
+                    val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
+                    runtime.start()
+                    val sim: Simulation<Any, P> = environmentAccess.simulation
+                    sim.addOutputMonitor(object : OutputMonitor<Any, P> {
+                        override fun finished(environment: Environment<Any, P>, time: Time, step: Long) {
+                            runBlocking {
+                                runtime.stop()
+                                lowBatteryReconfiguration.close()
+                                highBatteryReconfiguration.close()
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
         }
     }
