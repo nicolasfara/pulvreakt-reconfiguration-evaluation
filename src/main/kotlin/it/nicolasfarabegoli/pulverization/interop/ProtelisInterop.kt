@@ -27,6 +27,7 @@ import java.util.LinkedHashSet
 import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
+import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
@@ -52,6 +53,7 @@ object ProtelisInterop {
             }
             true
         }
+    private var maxSize: Long = 0
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.manageBattery() {
@@ -97,6 +99,10 @@ object ProtelisInterop {
     fun <P : Position<P>> AlchemistExecutionContext<P>.startPulverization() {
         initialized.get(this)
         initialized.cleanUp()
-        println(initialized.estimatedSize())
+        val entries = initialized.estimatedSize()
+        maxSize = max(maxSize, entries)
+        if ((deviceUID as ProtelisDevice<P>).id == 10) {
+            println("Cache size: $entries, max cache size ever reached: $maxSize")
+        }
     }
 }
