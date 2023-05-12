@@ -2,7 +2,6 @@
 
 package it.nicolasfarabegoli.pulverization.interop
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import it.nicolasfarabegoli.pulverization.DischargeBattery
 import it.nicolasfarabegoli.pulverization.GetMolecule
 import it.nicolasfarabegoli.pulverization.OnHighBattery
@@ -12,7 +11,6 @@ import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
-import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Environment
 import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
@@ -21,14 +19,9 @@ import it.unibo.alchemist.model.interfaces.Time
 import it.unibo.alchemist.protelis.AlchemistExecutionContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeoutOrNull
-import java.util.Collections
-import java.util.LinkedHashSet
-import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 import kotlin.math.max
-import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
     private val initialized = ConcurrentHashMap.newKeySet<AlchemistExecutionContext<*>>()
