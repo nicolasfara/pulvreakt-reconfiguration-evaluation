@@ -204,10 +204,8 @@ export:
           precision: 5
       - molecule: "behaviourInDevice"
         aggregators: [ sum ]
-        precision: 5
       - molecule: "behaviourInCloud"
         aggregators: [ sum ]
-        precision: 5
       - molecule: "batteryPercentage"
         aggregators: [ mean ]
         precision: 5
@@ -222,7 +220,8 @@ export:
         precision: 5
       - molecule: "isCharging"
         aggregators: [ sum ]
-        precision: 5
+#      - molecule: "isMoving"
+#        aggregators: [ sum ]
       - type: it.nicolasfarabegoli.pulverization.interop.CloudCost
         parameters:
           precision: 5
