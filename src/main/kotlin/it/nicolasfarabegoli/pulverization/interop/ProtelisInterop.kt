@@ -31,29 +31,8 @@ import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
-    private val initialized =
-        Caffeine.newBuilder().weakKeys().weakValues().build<AlchemistExecutionContext<*>, Boolean> {
-            val device = (it.deviceUID as ProtelisDevice<*>)
-            val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
-            val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
-            runBlocking {
-                val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
-                val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
-                runtime.start()
-                val sim: Simulation<Any, GeoPosition> = it.environmentAccess.simulation as Simulation<Any, GeoPosition>
-                sim.addOutputMonitor(object : OutputMonitor<Any, GeoPosition> {
-                    override fun finished(environment: Environment<Any, GeoPosition>, time: Time, step: Long) {
-                        runBlocking {
-                            runtime.stop()
-                            lowBatteryReconfiguration.close()
-                            highBatteryReconfiguration.close()
-                        }
-                    }
-                })
-            }
-            true
-        }
-    private var maxSize: Long = 0
+    private val initialized = ConcurrentHashMap.newKeySet<Any>()
+    private var maxSize: Int = 0
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.manageBattery() {
@@ -97,12 +76,34 @@ object ProtelisInterop {
 
     @JvmStatic
     fun <P : Position<P>> AlchemistExecutionContext<P>.startPulverization() {
-        initialized.get(this)
-        initialized.cleanUp()
-        val entries = initialized.estimatedSize()
-        maxSize = max(maxSize, entries)
-        if ((deviceUID as ProtelisDevice<P>).id == 10) {
-            println("Cache size: $entries, max cache size ever reached: $maxSize")
+        if (this !in initialized) {
+            initialized.add(this)
+            val device = (deviceUID as ProtelisDevice<*>)
+            val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
+            val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
+            runBlocking {
+                val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
+                val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
+                runtime.start()
+                val sim: Simulation<Any, GeoPosition> = environmentAccess.simulation as Simulation<Any, GeoPosition>
+                sim.addOutputMonitor(object : OutputMonitor<Any, GeoPosition> {
+                    override fun finished(environment: Environment<Any, GeoPosition>, time: Time, step: Long) {
+                        runBlocking {
+                            runtime.stop()
+                            lowBatteryReconfiguration.close()
+                            highBatteryReconfiguration.close()
+                            check(initialized.remove(this)) {
+                                "Cleanup failure!"
+                            }
+                        }
+                    }
+                })
+            }
+            val entries = initialized.size
+            maxSize = max(maxSize, entries)
+            if ((deviceUID as ProtelisDevice<P>).id == 10) {
+                println("Cache size: $entries, max cache size ever reached: $maxSize")
+            }
         }
     }
 }
