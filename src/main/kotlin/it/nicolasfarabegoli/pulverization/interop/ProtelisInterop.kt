@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package it.nicolasfarabegoli.pulverization.interop
 
 import com.github.benmanes.caffeine.cache.Caffeine
