@@ -43,9 +43,8 @@ dependencies {
     implementation(libs.bundles.alchemist.protelis)
     implementation(libs.bundles.pulverization)
     implementation(libs.kotlinx.coroutine)
-//    if (!GraphicsEnvironment.isHeadless()) {
-        implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
-//    }
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
+    implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
 }
 
 // Heap size estimation for batches

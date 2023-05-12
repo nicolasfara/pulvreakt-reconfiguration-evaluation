@@ -1,5 +1,6 @@
 package it.nicolasfarabegoli.pulverization.interop
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import it.nicolasfarabegoli.pulverization.DischargeBattery
 import it.nicolasfarabegoli.pulverization.GetMolecule
 import it.nicolasfarabegoli.pulverization.OnHighBattery
@@ -9,7 +10,9 @@ import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.interfaces.Simulation
 import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
+import it.unibo.alchemist.model.implementations.times.DoubleTime
 import it.unibo.alchemist.model.interfaces.Environment
+import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
 import it.unibo.alchemist.model.interfaces.Position
 import it.unibo.alchemist.model.interfaces.Time
@@ -20,11 +23,33 @@ import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Collections
 import java.util.LinkedHashSet
 import java.util.WeakHashMap
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
-    private val initialized = LinkedHashSet<Any>()
+    private val initialized =
+        Caffeine.newBuilder().weakKeys().weakValues().build<AlchemistExecutionContext<*>, Boolean> {
+            val device = (it.deviceUID as ProtelisDevice<*>)
+            val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
+            val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
+            runBlocking {
+                val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
+                val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
+                runtime.start()
+                val sim: Simulation<Any, GeoPosition> = it.environmentAccess.simulation as Simulation<Any, GeoPosition>
+                sim.addOutputMonitor(object : OutputMonitor<Any, GeoPosition> {
+                    override fun finished(environment: Environment<Any, GeoPosition>, time: Time, step: Long) {
+                        runBlocking {
+                            runtime.stop()
+                            lowBatteryReconfiguration.close()
+                            highBatteryReconfiguration.close()
+                        }
+                    }
+                })
+            }
+            true
+        }
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.manageBattery() {
@@ -68,30 +93,8 @@ object ProtelisInterop {
 
     @JvmStatic
     fun <P : Position<P>> AlchemistExecutionContext<P>.startPulverization() {
-        synchronized(initialized) {
-            if (this !in initialized) {
-                check(initialized.add(System.identityHashCode(this))) {
-                    "DUPLICATE MEMORY POINTER @${System.identityHashCode(this)}!!!!"
-                }
-                val device = (deviceUID as ProtelisDevice<*>)
-                val lowBatteryReconfiguration = device.node.asProperty<Any, OnLowBattery>()
-                val highBatteryReconfiguration = device.node.asProperty<Any, OnHighBattery>()
-                runBlocking {
-                    val config = configureRuntime(lowBatteryReconfiguration, highBatteryReconfiguration)
-                    val runtime = PulverizationRuntime(device.id.toString(), "smartphone", config)
-                    runtime.start()
-                    val sim: Simulation<Any, P> = environmentAccess.simulation
-                    sim.addOutputMonitor(object : OutputMonitor<Any, P> {
-                        override fun finished(environment: Environment<Any, P>, time: Time, step: Long) {
-                            runBlocking {
-                                runtime.stop()
-                                lowBatteryReconfiguration.close()
-                                highBatteryReconfiguration.close()
-                            }
-                        }
-                    })
-                }
-            }
-        }
+        initialized.get(this)
+        initialized.cleanUp()
+        println(initialized.estimatedSize())
     }
 }
