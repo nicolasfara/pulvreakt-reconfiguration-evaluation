@@ -31,7 +31,7 @@ import kotlin.math.max
 import kotlin.time.Duration.Companion.milliseconds
 
 object ProtelisInterop {
-    private val initialized = ConcurrentHashMap.newKeySet<Any>()
+    private val initialized = ConcurrentHashMap.newKeySet<AlchemistExecutionContext<*>>()
     private var maxSize: Int = 0
 
     @JvmStatic
@@ -92,9 +92,9 @@ object ProtelisInterop {
                             runtime.stop()
                             lowBatteryReconfiguration.close()
                             highBatteryReconfiguration.close()
-                            check(initialized.remove(this)) {
-                                "Cleanup failure!"
-                            }
+                        }
+                        check(initialized.remove(this@startPulverization)) {
+                            "Cleanup failure! for $this"
                         }
                     }
                 })
