@@ -1,16 +1,15 @@
 module org:protelis:randomTarget
 
 def randomTarget() {
-	let minLat = env.get("minLat")
-	let maxLat = env.get("maxLat")
-	let minLon = env.get("minLon")
-	let maxLon = env.get("maxLon")
-	let lat = (maxLat - minLat) * self.nextRandomDouble() + minLat
-	let lon = (maxLon - minLon) * self.nextRandomDouble() + minLon
+    let cityPOIs = env.get("cityPOIs")
+    let randomIndex = self.nextRandomDouble() * 200
+    let poi = cityPOIs.get(randomIndex)
+    let poi_lat = poi.get(0)
+    let poi_lon = poi.get(1)
 	// env.put("DEBUG: lat", lat)
 	// env.put("DEBUG: lon", lon)
 	let router = self.getEnvironmentAccess().getRoutingService()
-	let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(lat, lon)))
+	let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(poi_lat, poi_lon)))
 	env.put("target", result.orElse(self.getDevicePosition()))
 	result
 }

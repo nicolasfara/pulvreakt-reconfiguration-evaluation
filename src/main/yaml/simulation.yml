@@ -25,6 +25,15 @@ variables:
     formula: max_lat - min_lat
   longitude_space: &longitude_space
     formula: max_lon - min_lon
+  city_poi:
+    formula: 200
+  city_poi_coordinates: &city_poi_coordinates
+    formula: |
+      import kotlin.random.Random
+      generateSequence {
+        listOf(Random.nextDouble(min_lat, max_lat), Random.nextDouble(min_lon, max_lon))
+      }.take(city_poi).toList()
+    language: kotlin
   # Simulations variables
   device_count: &device_count
     type: GeometricVariable
@@ -132,6 +141,8 @@ _device: &device
       concentration: *max_lat
     - molecule: target
       concentration: [0, 0]
+    - molecule: cityPOIs
+      concentration: *city_poi_coordinates
     - molecule: batteryPercentage
       concentration: 100.0 # The current level of the battery expressed in percentage
     - molecule: currentCapacity
