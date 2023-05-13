@@ -25,15 +25,8 @@ variables:
     formula: max_lat - min_lat
   longitude_space: &longitude_space
     formula: max_lon - min_lon
-  city_poi:
+  city_poi: &city_poi
     formula: 200
-  city_poi_coordinates: &city_poi_coordinates
-    formula: |
-      import kotlin.random.Random
-      generateSequence {
-        listOf(Random.nextDouble(min_lat, max_lat), Random.nextDouble(min_lon, max_lon))
-      }.take(city_poi).toList()
-    language: kotlin
   # Simulations variables
   device_count: &device_count
     type: GeometricVariable
@@ -75,6 +68,14 @@ variables:
     max: 9
     step: 1
     default: 0
+  city_poi_coordinates: &city_poi_coordinates
+    formula: |
+      import kotlin.random.Random
+      val random = Random(seed.toInt())
+      generateSequence {
+        listOf(random.nextDouble(min_lat, max_lat), random.nextDouble(min_lon, max_lon))
+      }.take(city_poi).toList()
+    language: kotlin
 
 seeds:
   scenario: *seed
@@ -141,6 +142,12 @@ _device: &device
       concentration: *max_lat
     - molecule: target
       concentration: [0, 0]
+    - molecule: home
+      concentration: [0, 0]
+    - molecule: isHome
+      concentration: true
+    - molecule: cityPOINumber
+      concentration: *city_poi
     - molecule: cityPOIs
       concentration: *city_poi_coordinates
     - molecule: batteryPercentage
@@ -231,8 +238,8 @@ export:
         precision: 5
       - molecule: "isCharging"
         aggregators: [ sum ]
-#      - molecule: "isMoving"
-#        aggregators: [ sum ]
+      - molecule: "isMoving"
+        aggregators: [ sum ]
       - type: it.nicolasfarabegoli.pulverization.interop.CloudCost
         parameters:
           precision: 5

@@ -1,30 +1,54 @@
 module org:protelis:randomTarget
 
-def randomTarget() {
+def getNextRandomPOI() {
     let cityPOIs = env.get("cityPOIs")
-    let randomIndex = self.nextRandomDouble() * 200
+    let randomIndex = self.nextRandomDouble() * env.get("cityPOINumber")
     let poi = cityPOIs.get(randomIndex)
     let poi_lat = poi.get(0)
     let poi_lon = poi.get(1)
-	// env.put("DEBUG: lat", lat)
-	// env.put("DEBUG: lon", lon)
 	let router = self.getEnvironmentAccess().getRoutingService()
 	let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(poi_lat, poi_lon)))
 	env.put("target", result.orElse(self.getDevicePosition()))
 	result
 }
 
+def setupHome() {
+    let minLat = env.get("minLat")
+    let maxLat = env.get("maxLat")
+    let minLon = env.get("minLon")
+    let maxLon = env.get("maxLon")
+    let lat = (maxLat - minLat) * self.nextRandomDouble() + minLat
+    let lon = (maxLon - minLon) * self.nextRandomDouble() + minLon
+    let router = self.getEnvironmentAccess().getRoutingService()
+    let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(lat, lon)))
+    result.orElse(self.getDevicePosition())
+}
+
 let position = self.getDevicePosition()
 let now = self.getCurrentTime()
 let frame = 40
 
-if (env.get("target") == [0, 0]) { randomTarget() };
+if (env.get("target") == [0, 0]) {
+    env.put("home", setupHome());
+    getNextRandomPOI()
+};
 rep (still <- [now, position]) {
     let stillTime = still.get(0)
     let stillPosition = still.get(1)
+    let batteryPercentage = env.get("batteryPercentage")
+    let personalStartChargeThreshold = env.get("personalStartChargeThreshold")
+    let home = env.get("home")
+    let isCharging = env.get("isCharging")
+
+    env.put("isHome", position == env.get("home"))
+
     if (now - stillTime > frame) {
         let isStill = position == stillPosition;
-        if (isStill) { randomTarget() }
+        if (isStill && !isCharging) {
+            getNextRandomPOI()
+        } else {
+            if (batteryPercentage <= personalStartChargeThreshold) { env.put("target", home) };
+        }
         [now, position]
     } else {
         [stillTime, stillPosition]

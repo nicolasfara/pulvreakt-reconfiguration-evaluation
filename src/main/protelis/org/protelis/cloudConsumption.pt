@@ -13,7 +13,8 @@ def calculateCloudConsumption(delta) {
     let cloudWatt = jouleToWatt(cloudJoule, delta)
 
     let isCharging = env.get("isCharging")
-    if (behaviourInCloud && !isCharging) { cloudWatt } else { 0.0 }
+    let batteryPercentage = env.get("batteryPercentage")
+    if (behaviourInCloud && !isCharging && batteryPercentage > 0.0) { cloudWatt } else { 0.0 }
 }
 
 let now = self.getCurrentTime();

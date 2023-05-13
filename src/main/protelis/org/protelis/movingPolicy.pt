@@ -1,16 +1,3 @@
 module org:protelis:movingPolicy
 
-let personalStartChargeThreshold = env.get("personalStartChargeThreshold")
-let personalStopChargeThreshold = env.get("personalStopChargeThreshold")
-let isCharging = env.get("isCharging")
-let batteryPercentage = env.get("batteryPercentage")
-
-if (isCharging) {
-    if (batteryPercentage < personalStartChargeThreshold) {
-        env.put("isMoving", false)
-    } else {
-        if (batteryPercentage > personalStopChargeThreshold) { env.put("isMoving", true) } else { env.put("isMoving", false) }
-    }
-} else {
-    if (batteryPercentage < personalStartChargeThreshold) { env.put("isMoving", false) } else { env.put("isMoving", true) }
-}
+env.put("isMoving", !env.get("isCharging"))

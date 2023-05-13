@@ -26,16 +26,17 @@ data class DischargeBattery(
     private val rechargeRate by GetMolecule
     private val currentCapacity by GetMolecule
     private val batteryPercentage by GetMolecule
+    private val isHome by GetMolecule
 
     private val deviceEPIValue: Double by lazy { node.getConcentration(deviceEPI) as Double * 1E-9 }
-    private val behaviourInstructionsValue: Double by lazy { node.getConcentration(behaviourInstructions) as Double * 1E6 }
-    private val communicationInstructionsValue: Double by lazy { node.getConcentration(communicationInstructions) as Double * 1E6 }
-    private val intraCommInstructionsValue: Double by lazy { node.getConcentration(intraCommInstructions) as Double * 1E6 }
-    private val osDeviceInstructionsValue: Double by lazy { node.getConcentration(osDeviceInstructions) as Double * 1E6 }
-    private val sensorsInstructionsValue: Double by lazy { node.getConcentration(sensorsInstructions) as Double * 1E6 }
-    private val maxBatteryCapacityValue: Double by lazy { node.getConcentration(maxBatteryCapacity) as Double }
-    private val personalStartChargeThresholdValue: Double by lazy { node.getConcentration(personalStartChargeThreshold) as Double }
-    private val personalStopChargeThresholdValue: Double by lazy { node.getConcentration(personalStopChargeThreshold) as Double }
+    private val behaviourInstructionsValue by lazy { node.getConcentration(behaviourInstructions) as Double * 1E6 }
+    private val communicationInstructionsValue by lazy { node.getConcentration(communicationInstructions) as Double * 1E6 }
+    private val intraCommInstructionsValue by lazy { node.getConcentration(intraCommInstructions) as Double * 1E6 }
+    private val osDeviceInstructionsValue by lazy { node.getConcentration(osDeviceInstructions) as Double * 1E6 }
+    private val sensorsInstructionsValue by lazy { node.getConcentration(sensorsInstructions) as Double * 1E6 }
+    private val maxBatteryCapacityValue by lazy { node.getConcentration(maxBatteryCapacity) as Double }
+    private val personalStartChargeThresholdValue by lazy { node.getConcentration(personalStartChargeThreshold) as Double }
+    private val personalStopChargeThresholdValue by lazy { node.getConcentration(personalStopChargeThreshold) as Double }
     private val rechargeRateValue: Double by lazy { node.getConcentration(rechargeRate) as Double }
 
     private var prevTime = 0.0
@@ -47,19 +48,30 @@ data class DischargeBattery(
         val now = ec.simulation.time.toDouble()
         val delta = now - prevTime
         prevTime = now
+
+        val isHomeValue = node.getConcentration(isHome) as Boolean
+        val batteryPercentageValue = node.getConcentration(batteryPercentage) as Double
         val isChargingValue = node.getConcentration(isCharging) as Boolean
-        val currentCapacityValue = node.getConcentration(currentCapacity) as Double
-        val newCharge = if (isChargingValue) {
+        val isChargingCondition =
+            isHomeValue &&
+                ((batteryPercentageValue <= personalStartChargeThresholdValue) || isChargingValue) &&
+                (batteryPercentageValue <= personalStopChargeThresholdValue)
+        node.setConcentration(isCharging, isChargingCondition)
+
+        val newCharge = if (isChargingCondition) {
             if (isFirstCharge) {
                 restoreInDevice = node.getConcentration(behaviourInDevice) as Boolean
                 restoreInCloud = node.getConcentration(behaviourInCloud) as Boolean
+                isFirstCharge = false
             }
-            isFirstCharge = false
+            val currentCapacityValue = node.getConcentration(currentCapacity) as Double
             recharge(currentCapacityValue, delta)
         } else {
             isFirstCharge = true
+            val currentCapacityValue = node.getConcentration(currentCapacity) as Double
             if (delta > 0.0) { discharge(currentCapacityValue, delta) } else { currentCapacityValue }
         }
+
         node.setConcentration(currentCapacity, newCharge)
         val percentage = newCharge.toPercentage(maxBatteryCapacityValue)
         node.setConcentration(batteryPercentage, percentage)
@@ -90,9 +102,9 @@ data class DischargeBattery(
         val newCharge = currentValue - (totalMilliAmps * delta / 3600.0)
         val currentPercentage = newCharge.toPercentage(maxBatteryCapacityValue)
 
-        return if (currentPercentage <= personalStartChargeThresholdValue) {
-            node.setConcentration(isCharging, true)
-            personalStartChargeThresholdValue.toCharge(maxBatteryCapacityValue)
+        return if (currentPercentage < 0.0) {
+            node.setConcentration(batteryConsumption, 0.0)
+            0.0
         } else { newCharge }
     }
 
@@ -103,7 +115,7 @@ data class DischargeBattery(
         val addingCharge = rechargeRateValue * delta / 3600.0
         val currentPercentage = currentCharge.toPercentage(maxBatteryCapacityValue)
         return if (currentPercentage >= personalStopChargeThresholdValue) {
-            node.setConcentration(isCharging, false)
+            // node.setConcentration(isCharging, false)
             node.setConcentration(behaviourInDevice, restoreInDevice)
             node.setConcentration(behaviourInCloud, restoreInCloud)
             personalStopChargeThresholdValue.toCharge(maxBatteryCapacityValue)
