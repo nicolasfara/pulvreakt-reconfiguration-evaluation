@@ -5,11 +5,12 @@ import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlin.random.Random
+import org.apache.commons.math3.random.RandomGenerator
 
 data class DischargeBattery(
     override val node: Node<Any>,
     private val ec: Environment<*, *>,
+    private val random: RandomGenerator,
 ) : NodeProperty<Any> {
     private val deviceEPI by GetMolecule
     private val behaviourInstructions by GetMolecule
@@ -40,9 +41,6 @@ data class DischargeBattery(
     private val rechargeRateValue: Double by lazy { node.getConcentration(rechargeRate) as Double }
 
     private var prevTime = 0.0
-    private var isFirstCharge = true
-    private var restoreInDevice = true
-    private var restoreInCloud = false
 
     fun manageDeviceBattery() {
         val now = ec.simulation.time.toDouble()
@@ -59,15 +57,9 @@ data class DischargeBattery(
         node.setConcentration(isCharging, isChargingCondition)
 
         val newCharge = if (isChargingCondition) {
-            if (isFirstCharge) {
-                restoreInDevice = node.getConcentration(behaviourInDevice) as Boolean
-                restoreInCloud = node.getConcentration(behaviourInCloud) as Boolean
-                isFirstCharge = false
-            }
             val currentCapacityValue = node.getConcentration(currentCapacity) as Double
             recharge(currentCapacityValue, delta)
         } else {
-            isFirstCharge = true
             val currentCapacityValue = node.getConcentration(currentCapacity) as Double
             if (delta > 0.0) { discharge(currentCapacityValue, delta) } else { currentCapacityValue }
         }
@@ -91,7 +83,7 @@ data class DischargeBattery(
         val sensorsJoule = deviceEPIValue * sensorsInstructionsValue * delta
         val sensorsWatt = sensorsJoule.toWatt(delta)
 
-        val osJoule = Random.nextDouble(osDeviceInstructionsValue) * deviceEPIValue * delta
+        val osJoule = random.nextDouble() * osDeviceInstructionsValue * deviceEPIValue * delta
         val osWatt = osJoule.toWatt(delta)
 
         val totalWatt = behaviourWatt + communicationWatt + sensorsWatt + osWatt
@@ -110,14 +102,9 @@ data class DischargeBattery(
 
     private fun recharge(currentCharge: Double, delta: Double): Double {
         node.setConcentration(batteryConsumption, 0.0)
-        node.setConcentration(behaviourInDevice, false)
-        node.setConcentration(behaviourInCloud, false)
         val addingCharge = rechargeRateValue * delta / 3600.0
         val currentPercentage = currentCharge.toPercentage(maxBatteryCapacityValue)
         return if (currentPercentage >= personalStopChargeThresholdValue) {
-            // node.setConcentration(isCharging, false)
-            node.setConcentration(behaviourInDevice, restoreInDevice)
-            node.setConcentration(behaviourInCloud, restoreInCloud)
             personalStopChargeThresholdValue.toCharge(maxBatteryCapacityValue)
         } else { currentCharge + addingCharge }
     }

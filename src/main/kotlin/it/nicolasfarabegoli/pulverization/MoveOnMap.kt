@@ -5,10 +5,14 @@ import it.unibo.alchemist.model.interfaces.GeoPosition
 import it.unibo.alchemist.model.interfaces.Node
 import it.unibo.alchemist.model.interfaces.NodeProperty
 import it.unibo.alchemist.model.interfaces.Time
+import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.datatype.impl.ArrayTupleImpl
-import kotlin.random.Random
 
-class MoveOnMap(override val node: Node<Any>, private val environment: OSMEnvironment<Any>) : NodeProperty<Any> {
+class MoveOnMap(
+    override val node: Node<Any>,
+    private val environment: OSMEnvironment<Any>,
+    private val random: RandomGenerator
+) : NodeProperty<Any> {
     private val target by GetMolecule
     private val home by GetMolecule
     private val batteryPercentage by GetMolecule
@@ -72,10 +76,13 @@ class MoveOnMap(override val node: Node<Any>, private val environment: OSMEnviro
         }
     }
 
-    private fun nextPoiTime() = Random.nextDouble(MIN_POI_TIME, MAX_POI_TIME)
+    private fun nextPoiTime() = random.nextDouble() * (MAX_POI_TIME - MIN_POI_TIME) + MIN_POI_TIME
 
+    @Suppress("UNCHECKED_CAST")
     private fun getNextRandomPOI() {
-        val selectedPOI = cityPOIsValue.toList().random() as ArrayTupleImpl
+        val allPOIs = cityPOIsValue.toList() as List<ArrayTupleImpl>
+        val index = (random.nextDouble() * allPOIs.size).toInt()
+        val selectedPOI = allPOIs[index]
         val newTarget = routingService.allowedPointClosestTo(
             environment.makePosition(selectedPOI[0] as Double, selectedPOI[1] as Double),
         ) ?: getDevicePosition()
@@ -83,8 +90,8 @@ class MoveOnMap(override val node: Node<Any>, private val environment: OSMEnviro
     }
 
     private fun setupHome() {
-        val lat = Random.nextDouble(minLatValue, maxLatValue)
-        val lon = Random.nextDouble(minLonValue, maxLonValue)
+        val lat = random.nextDouble() * (maxLatValue - minLatValue) + minLatValue
+        val lon = random.nextDouble() * (maxLonValue - minLonValue) + minLonValue
         val homeCoordinates = routingService.allowedPointClosestTo(environment.makePosition(lat, lon))
             ?: getDevicePosition()
         node.setConcentration(home, homeCoordinates)
