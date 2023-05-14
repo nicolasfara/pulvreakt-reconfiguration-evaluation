@@ -2,11 +2,7 @@
 
 package it.nicolasfarabegoli.pulverization.interop
 
-import it.nicolasfarabegoli.pulverization.DischargeBattery
-import it.nicolasfarabegoli.pulverization.GetMolecule
-import it.nicolasfarabegoli.pulverization.OnHighBattery
-import it.nicolasfarabegoli.pulverization.OnLowBattery
-import it.nicolasfarabegoli.pulverization.configureRuntime
+import it.nicolasfarabegoli.pulverization.*
 import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
 import it.unibo.alchemist.boundary.interfaces.OutputMonitor
 import it.unibo.alchemist.core.interfaces.Simulation
@@ -26,6 +22,13 @@ import kotlin.math.max
 object ProtelisInterop {
     private val initialized = ConcurrentHashMap.newKeySet<AlchemistExecutionContext<*>>()
     private var maxSize: Int = 0
+
+    @JvmStatic
+    fun AlchemistExecutionContext<*>.moveOnMap() {
+        val device = (deviceUID as ProtelisDevice<*>)
+        val move = device.node.asProperty<Any, MoveOnMap>()
+        move.moveOnMapRound()
+    }
 
     @JvmStatic
     fun AlchemistExecutionContext<*>.manageBattery() {

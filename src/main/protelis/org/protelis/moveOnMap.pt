@@ -1,57 +1,65 @@
 module org:protelis:moveOnMap
+import it.nicolasfarabegoli.pulverization.interop.ProtelisInterop.moveOnMap
 
-def getNextRandomPOI() {
-    let cityPOIs = env.get("cityPOIs")
-    let randomIndex = self.nextRandomDouble() * env.get("cityPOINumber")
-    let poi = cityPOIs.get(randomIndex)
-    let poi_lat = poi.get(0)
-    let poi_lon = poi.get(1)
-	let router = self.getEnvironmentAccess().getRoutingService()
-	let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(poi_lat, poi_lon)))
-	env.put("target", result.orElse(self.getDevicePosition()))
-	result
-}
+// def getNextRandomPOI() {
+//     let cityPOIs = env.get("cityPOIs")
+//     let randomIndex = self.nextRandomDouble() * env.get("cityPOINumber")
+//     let poi = cityPOIs.get(randomIndex)
+//     let poi_lat = poi.get(0)
+//     let poi_lon = poi.get(1)
+// 	let router = self.getEnvironmentAccess().getRoutingService()
+// 	let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(poi_lat, poi_lon)))
+// 	env.put("target", result.orElse(self.getDevicePosition()))
+// 	result
+// }
+//
+// def setupHome() {
+//     let minLat = env.get("minLat")
+//     let maxLat = env.get("maxLat")
+//     let minLon = env.get("minLon")
+//     let maxLon = env.get("maxLon")
+//     let lat = (maxLat - minLat) * self.nextRandomDouble() + minLat
+//     let lon = (maxLon - minLon) * self.nextRandomDouble() + minLon
+//     let router = self.getEnvironmentAccess().getRoutingService()
+//     let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(lat, lon)))
+//     result.orElse(self.getDevicePosition())
+// }
+//
+// let position = self.getDevicePosition()
+// let now = self.getCurrentTime()
+// let frame = 40 * self.nextRandomDouble() + 40
+//
+// if (env.get("target") == [0, 0]) {
+//     env.put("home", setupHome());
+//     getNextRandomPOI()
+// };
+//
+// rep (still <- [now, position]) {
+//     let stillTime = still.get(0)
+//     let stillPosition = still.get(1)
+//     let batteryPercentage = env.get("batteryPercentage")
+//     let personalStartChargeThreshold = env.get("personalStartChargeThreshold")
+//     let home = env.get("home")
+//     let isCharging = env.get("isCharging")
+//     let isHome = env.get("isHome")
+//
+//     // Determine if I reached the home
+//     env.put("isHome", position == env.get("home"))
+//
+//     // Determine the travelled distance
+//     let actualDistance = env.get("distance")
+//     let travelledDistance = if (!isHome && !isCharging && batteryPercentage > 0.0) { 1.4 * self.getDeltaTime() / 1000.0 } else { 0.0 }
+//     let newTotalDistance = travelledDistance + actualDistance
+//     env.put("distance", newTotalDistance)
+//
+//     if (now - stillTime > frame) {
+//         let poiReached = position == stillPosition;
+//         if (poiReached && !isCharging) { getNextRandomPOI() }
+//         else { if (batteryPercentage <= personalStartChargeThreshold) { env.put("target", home) } else { 0.0 } }
+//         [now, position]
+//     } else {
+//         [stillTime, stillPosition]
+//     }
+// }
 
-def setupHome() {
-    let minLat = env.get("minLat")
-    let maxLat = env.get("maxLat")
-    let minLon = env.get("minLon")
-    let maxLon = env.get("maxLon")
-    let lat = (maxLat - minLat) * self.nextRandomDouble() + minLat
-    let lon = (maxLon - minLon) * self.nextRandomDouble() + minLon
-    let router = self.getEnvironmentAccess().getRoutingService()
-    let result = optionally(router.allowedPointClosestTo(self.getEnvironmentAccess().makePosition(lat, lon)))
-    result.orElse(self.getDevicePosition())
-}
-
-let position = self.getDevicePosition()
-let now = self.getCurrentTime()
-let frame = 40
-
-if (env.get("target") == [0, 0]) {
-    env.put("home", setupHome());
-    getNextRandomPOI()
-};
-
-rep (still <- [now, position]) {
-    let stillTime = still.get(0)
-    let stillPosition = still.get(1)
-    let batteryPercentage = env.get("batteryPercentage")
-    let personalStartChargeThreshold = env.get("personalStartChargeThreshold")
-    let home = env.get("home")
-    let isCharging = env.get("isCharging")
-
-    env.put("isHome", position == env.get("home"))
-
-    if (now - stillTime > frame) {
-        let isStill = position == stillPosition;
-        if (isStill && !isCharging) {
-            getNextRandomPOI()
-        } else {
-            if (batteryPercentage <= personalStartChargeThreshold) { env.put("target", home) } else { 0.0 }
-        }
-        [now, position]
-    } else {
-        [stillTime, stillPosition]
-    }
-}
+moveOnMap()

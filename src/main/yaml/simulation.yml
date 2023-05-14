@@ -131,6 +131,7 @@ _device: &device
     - type: it.nicolasfarabegoli.pulverization.OnLowBattery
     - type: it.nicolasfarabegoli.pulverization.OnHighBattery
     - type: it.nicolasfarabegoli.pulverization.DischargeBattery
+    - type: it.nicolasfarabegoli.pulverization.MoveOnMap
   contents:
     - molecule: minLon
       concentration: *min_lon
@@ -146,6 +147,8 @@ _device: &device
       concentration: [0, 0]
     - molecule: isHome
       concentration: true
+    - molecule: distance
+      concentration: 0.0 # [Km]
     - molecule: cityPOINumber
       concentration: *city_poi
     - molecule: cityPOIs
@@ -240,6 +243,9 @@ export:
         aggregators: [ sum ]
       - molecule: "isMoving"
         aggregators: [ sum ]
+      - molecule: "distance"
+        aggregators: [ sum, mean ]
+        precision: 5
       - type: it.nicolasfarabegoli.pulverization.interop.CloudCost
         parameters:
           precision: 5

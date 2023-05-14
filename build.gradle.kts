@@ -1,5 +1,4 @@
 import org.gradle.configurationcache.extensions.capitalized
-import java.awt.GraphicsEnvironment
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -45,6 +44,7 @@ dependencies {
     implementation(libs.kotlinx.coroutine)
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
     implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
+    implementation("it.unibo.alchemist:alchemist-maps:${libs.versions.alchemist.get()}")
 }
 
 // Heap size estimation for batches
