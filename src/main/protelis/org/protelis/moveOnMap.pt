@@ -1,4 +1,4 @@
-module org:protelis:randomTarget
+module org:protelis:moveOnMap
 
 def getNextRandomPOI() {
     let cityPOIs = env.get("cityPOIs")
@@ -32,6 +32,7 @@ if (env.get("target") == [0, 0]) {
     env.put("home", setupHome());
     getNextRandomPOI()
 };
+
 rep (still <- [now, position]) {
     let stillTime = still.get(0)
     let stillPosition = still.get(1)
@@ -47,7 +48,7 @@ rep (still <- [now, position]) {
         if (isStill && !isCharging) {
             getNextRandomPOI()
         } else {
-            if (batteryPercentage <= personalStartChargeThreshold) { env.put("target", home) };
+            if (batteryPercentage <= personalStartChargeThreshold) { env.put("target", home) } else { 0.0 }
         }
         [now, position]
     } else {

@@ -36,7 +36,7 @@ variables:
     parameters: [3, [3, 6, 12, 24]]
   low_battery_threshold: &low_battery_threshold # [%]
     type: ArbitraryVariable
-    parameters: [30, [ 0.0, 30]]
+    parameters: [30, [ 0, 30]]
   high_battery_threshold: &high_battery_threshold # [%]
     type: ArbitraryVariable
     parameters: [70, [70, 100.0]]
@@ -81,9 +81,9 @@ seeds:
   scenario: *seed
   simulation: *seed
 
-_random-target: &random-target
+_move_on_map: &move_on_map
   - time-distribution: 0.5
-    program: org:protelis:randomTarget
+    program: org:protelis:moveOnMap
 
 _discharge: &discharge
   - time-distribution: 0.5
@@ -121,12 +121,12 @@ _move: &move
       parameters: 0
     actions:
       - type: RunProtelisProgram
-        parameters: org:protelis:randomTarget
+        parameters: org:protelis:moveOnMap
 
 _device: &device
   type: Rectangle
   parameters: [*device_count, *min_lat, *min_lon, *latitude_space, *longitude_space]
-  programs: [*setup-device, *random-target, *move, *discharge, *cloud-consumption, *moving-policy]
+  programs: [*setup-device, *move_on_map, *move, *discharge, *cloud-consumption, *moving-policy]
   properties:
     - type: it.nicolasfarabegoli.pulverization.OnLowBattery
     - type: it.nicolasfarabegoli.pulverization.OnHighBattery
