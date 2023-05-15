@@ -110,17 +110,21 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
             description = "Launches batch experiments for $capitalizedName"
             maxHeapSize = "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
             File("data").mkdirs()
+            val variablesUnderTest = arrayOf(
+                "seed",
+                // uncomment to test for different kinds of applications
+                // "battery_discharge_time",
+                "cloud_epi",
+                "low_battery_threshold",
+                "epi_ratio",
+                "device_count",
+            )
             args(
-                "-e", "data/${it.nameWithoutExtension}",
+                "-e",
+                "data/${it.nameWithoutExtension}",
                 "-b",
                 "-var",
-                    "seed",
-                    "battery_discharge_time",
-                    "cloud_epi",
-                    "low_battery_threshold",
-                    "high_battery_threshold",
-                    "epi_ratio",
-                    "device_count",
+                *variablesUnderTest,
                 "-p", threadCount,
                 "-i", 1,
             )

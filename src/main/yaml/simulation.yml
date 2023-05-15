@@ -29,17 +29,18 @@ variables:
     formula: 200
   # Simulations variables
   device_count: &device_count
-    type: GeometricVariable
-    parameters: [ 10, 10, 1000, 5 ]
+    type: ArbitraryVariable
+    parameters: [100, [100, 300, 1000]]
   battery_discharge_time: # [hours]
     type: ArbitraryVariable
-    parameters: [3, [3, 6, 12, 24]]
+    parameters: [6, [3, 6, 12, 24]]
   low_battery_threshold: &low_battery_threshold # [%]
-    type: ArbitraryVariable
-    parameters: [30, [ 0, 30]]
+    min: 0
+    max: 100
+    step: 20
+    default: 40
   high_battery_threshold: &high_battery_threshold # [%]
-    type: ArbitraryVariable
-    parameters: [70, [70, 100]]
+    formula: 100 - low_battery_threshold
   epi_ratio:
     type: ArbitraryVariable
     parameters: [3, [ 3, 30 ] ]
