@@ -21,12 +21,12 @@ variables:
     formula: 12.267570291912632
   min_lon: &min_lon
     formula: 12.235568921311268
+  city_poi: &city_poi
+    formula: 200
   latitude_space: &latitude_space
     formula: max_lat - min_lat
   longitude_space: &longitude_space
     formula: max_lon - min_lon
-  city_poi: &city_poi
-    formula: 200
   # Simulations variables
   device_count: &device_count
     type: ArbitraryVariable
@@ -34,13 +34,15 @@ variables:
   battery_discharge_time: # [hours]
     type: ArbitraryVariable
     parameters: [6, [3, 6, 12, 24]]
+  balance: &balance
+    type: ArbitraryVariable
+    parameters: [[20, 80], [[0, 100], [20, 80], [20, 60], [40, 80], [40, 60], [101, 101]]]
   low_battery_threshold: &low_battery_threshold # [%]
-    min: 0
-    max: 100
-    step: 20
-    default: 40
+    language: kotlin
+    formula: balance.first()
   high_battery_threshold: &high_battery_threshold # [%]
-    formula: 100 - low_battery_threshold
+    language: kotlin
+    formula: balance.last()
   epi_ratio:
     type: ArbitraryVariable
     parameters: [3, [ 3, 30 ] ]

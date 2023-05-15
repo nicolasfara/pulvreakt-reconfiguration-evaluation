@@ -115,7 +115,7 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
                 // uncomment to test for different kinds of applications
                 // "battery_discharge_time",
                 "cloud_epi",
-                "low_battery_threshold",
+                "balance",
                 "epi_ratio",
                 "device_count",
             )
