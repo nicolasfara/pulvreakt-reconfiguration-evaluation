@@ -57,12 +57,18 @@ class MoveOnMap(
         // Determine if I reached the home
         node.setConcentration(isHome, getDevicePosition() == homeValue)
 
-        // Determine the travelled distance
-        val actualDistance = node.getConcentration(distance) as Double
-        val travelledDistance =
-            if (!isHomeValue && !isChargingValue && batteryPercentageValue > 0.0) { 1.4 * delta / 1000.0 } else { 0.0 }
-        val newTotalDistance = actualDistance + travelledDistance
-        node.setConcentration(distance, newTotalDistance)
+        // Determine the travelled distance if not visiting a POI
+        if (environment.getPosition(node) != node.getConcentration(target)) {
+            val actualDistance = node.getConcentration(distance) as Double
+            val travelledDistance =
+                if (!isHomeValue && !isChargingValue && batteryPercentageValue > 0.0) {
+                    1.4 * delta / 1000.0
+                } else {
+                    0.0
+                }
+            val newTotalDistance = actualDistance + travelledDistance
+            node.setConcentration(distance, newTotalDistance)
+        }
 
         val time = (environment.simulation.time - stillTime).toDouble()
         if (time > nexPoiTimeValue) {
