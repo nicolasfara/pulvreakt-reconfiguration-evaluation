@@ -92,7 +92,7 @@ def extractCoordinates(filename):
     """
     with open(filename, 'r') as file:
 #        regex = re.compile(' (?P<varName>[a-zA-Z._-]+) = (?P<varValue>[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?),?')
-        regex = r"(?P<varName>[a-zA-Z._-]+) = (?P<varValue>[^,]*),?"
+        regex = r"(?P<varName>[a-zA-Z._-]+) = (?P<varValue>\[[\d\s,]+\]|\d+(?:\.\d+)?)"
         dataBegin = r"\d"
         is_float = r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?"
         for line in file:
