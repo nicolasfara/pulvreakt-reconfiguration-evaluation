@@ -7,8 +7,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cmx
 import matplotlib.font_manager as fm
-import os
-import pickle
 
 def distance(val, ref):
     return abs(ref - val)
@@ -74,7 +72,7 @@ def mergeDicts(d1, d2):
         res[k] = valueOrEmptySet(k, d1) | valueOrEmptySet(k, d2)
     return res
 
-def extractCoordinates(filename):
+def extractCoordinates(filename, excludes = []):
     """
     Scans the header of an Alchemist file in search of the variables.
 
@@ -105,7 +103,7 @@ def extractCoordinates(filename):
                     var : float(value) if re.match(is_float, value)
                         else bool(re.match(r".*?true.*?", value.lower())) if re.match(r".*?(true|false).*?", value.lower())
                         else value
-                    for var, value in match
+                    for var, value in match if var not in excludes
                 }
             elif re.match(dataBegin, line[0]):
                 return {}
