@@ -72,7 +72,7 @@ def mergeDicts(d1, d2):
         res[k] = valueOrEmptySet(k, d1) | valueOrEmptySet(k, d2)
     return res
 
-def extractCoordinates(filename):
+def extractCoordinates(filename, excludes = []):
     """
     Scans the header of an Alchemist file in search of the variables.
 
@@ -90,6 +90,7 @@ def extractCoordinates(filename):
         lists (set of variable values)
 
     """
+    import re
     with open(filename, 'r') as file:
 #        regex = re.compile(' (?P<varName>[a-zA-Z._-]+) = (?P<varValue>[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?),?')
         regex = r"(?P<varName>[a-zA-Z._-]+) = (?P<varValue>\[[\d\s,]+\]|\d+(?:\.\d+)?)"
@@ -102,7 +103,7 @@ def extractCoordinates(filename):
                     var : float(value) if re.match(is_float, value)
                         else bool(re.match(r".*?true.*?", value.lower())) if re.match(r".*?(true|false).*?", value.lower())
                         else value
-                    for var, value in match
+                    for var, value in match if var not in excludes
                 }
             elif re.match(dataBegin, line[0]):
                 return {}
@@ -197,6 +198,7 @@ if __name__ == '__main__':
     maxTime = 12 * 3600
     timeColumnName = 'time'
     logarithmicTime = False
+    excludeVariables = ['battery_discharge_time']
     # One or more variables are considered random and "flattened"
     seedVars = ['seed']
     # Label mapping
@@ -289,7 +291,7 @@ if __name__ == '__main__':
                 # From the file name, extract the independent variables
                 dimensions = {}
                 for file in allfiles:
-                    dimensions = mergeDicts(dimensions, extractCoordinates(file))
+                    dimensions = mergeDicts(dimensions, extractCoordinates(file, excludeVariables))
                 dimensions = {k: sorted(v) for k, v in dimensions.items()}
                 # Add time to the independent variables
                 dimensions[timeColumnName] = range(0, timeSamples)
@@ -334,7 +336,7 @@ if __name__ == '__main__':
                         for idx, v in enumerate(varNames):
                             if v != timeColumnName:
                                 darray = dataset[v]
-                                experimentVars = extractCoordinates(file)
+                                experimentVars = extractCoordinates(file, excludeVariables)
                                 darray.loc[experimentVars] = data[:, idx].A1
                     # Fold the dataset along the seed variables, producing the mean and stdev datasets
                     mergingVariables = [seed for seed in seedVars if seed in dataset.coords]
@@ -372,7 +374,7 @@ if __name__ == '__main__':
 #        ax.set_xlim(min(xdata), max(xdata))
         index = 0
         for (label, (data, error)) in ydata.items():
-#            print(f'plotting {data}\nagainst {xdata}')
+            #print(f'plotting {data}\nagainst {xdata}')
             lines = ax.plot(xdata, data, label=label, color=colors(index / (len(ydata) - 1)) if colors else None, linewidth=linewidth)
             index += 1
             if error is not None:
