@@ -46,6 +46,8 @@ jobs:
         run: mkdir -p charts
       - name: Generate charts
         run: python process.py
+      - name: Generate custom charts
+        run: jupyter nbconvert --execute --to notebook --inplace 'data-visualization/Data Visualization.ipynb'
       - name: Generate archive
         run: tar --use-compress-program zstd -cf charts.tar.zst charts/
       - name: Upload charts
