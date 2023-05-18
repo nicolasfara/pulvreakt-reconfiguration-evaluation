@@ -1,3 +1,33 @@
+## 1.0.0 (2023-05-18)
+
+
+### Bug Fixes
+
+* fix charts title ([aa57966](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/aa579667a9d27a7449ab163707a8b57b284c7bf7))
+
+
+### General maintenance
+
+* setup ([3f799f7](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/3f799f7ae745b45c89c2d5563bb9fda792f241a8))
+
+
+### Dependency updates
+
+* **deps:** update alchemist to v25.16.2 ([e736553](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/e7365536b13d668b7a2bfb8443abc42c88c135a8))
+* **deps:** update alpine docker tag to v3.18.0 ([36b6a11](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/36b6a11f5bac802f478405c4b9485d1853c582cd))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.7.1 ([9c704da](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/9c704daa8efcbba64d1fba05aed200489d97440e))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.26 ([4fce477](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/4fce4772d175b4fc2bc2a9d2fcf5eddc5952e9bd))
+* **deps:** update plugin com.gradle.enterprise to v3.13.2 ([f578455](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/f57845578076bad5fe79462c1a340b076a4a10ce))
+* **deps:** update plugin kotlin-qa to v0.41.0 ([8e951ac](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/8e951ac5f2b102168b50d368f44e01889224fad8))
+* **deps:** update plugin multijvmtesting to v0.5.1 ([e9e99c1](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/e9e99c1a4352a6909675f6caa4cd5cb2c1180114))
+* **deps:** update pulverization to v0.6.1 ([dddac30](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/dddac300524a7e9fb231747c22a7a4df66a2ec38))
+
+
+### Build and continuous integration
+
+* build docker container instead run it in CI ([1e31b01](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/1e31b015afe502f55226a54641f21e0215da2987))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.5 ([fcc2ea3](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/fcc2ea3b2f296acb7c1fbac3e08cbd6db445cb53))
+
 ## [1.1.3](https://github.com/DanySK/alchemist-experiments-bootstrap/compare/1.1.2...1.1.3) (2023-01-29)
 
 
