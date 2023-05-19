@@ -1,3 +1,16 @@
+## [1.0.1](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.0.0...1.0.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* cleanup older data file ([b8e768d](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/b8e768d1c57af6f3b2d1180d1381087cff48a1c3))
+* update file ([d62b051](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/d62b051648b4aafcd487b08c66965cf5ea59024d))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.0.0 [skip ci] ([478523c](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/478523cc7e7f27c48b9824e3feaabf1889ac28c6))
+
 ## 1.0.0 (2023-05-18)
 
 
