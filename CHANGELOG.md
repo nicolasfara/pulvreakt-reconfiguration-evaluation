@@ -1,3 +1,15 @@
+## [1.1.0](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.0.1...1.1.0) (2023-05-19)
+
+
+### Features
+
+* update charts with final data ([cef2e14](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/cef2e1466e98e8e0eb40010a21bc9993cb46f160))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.0.1 [skip ci] ([84d5b35](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/84d5b357032f96a8c496b1a9d096f37cd2303407))
+
 ## [1.0.1](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.0.0...1.0.1) (2023-05-19)
 
 
