@@ -1,3 +1,27 @@
+## [1.1.1](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.1.0...1.1.1) (2023-05-20)
+
+
+### Bug Fixes
+
+* fix price calculation for cloud instances ([7533217](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/7533217bc318260c3a86d1d16c9ae6822fcb0f99))
+* update charts ([10f8c3d](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/10f8c3d510b26f5ec784d55a12c96302c533ff3b))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.1.0 [skip ci] ([9b52e1e](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/9b52e1e73935143453295317463e8ec88ae730b0))
+
+
+### Dependency updates
+
+* **deps:** add jupyter lab dependency ([207512f](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/207512fe367b07aba911bec7896bb21192523f1f))
+
+
+### Documentation
+
+* add documentation for custom charts ([0baf700](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/0baf700ccda7ef7bc10b595ed51d2192684b9f83))
+* fix with virtualenv ([d82cf44](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/d82cf447d0de1da8cbb59754a91a26a2fd525815))
+
 ## [1.1.0](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.0.1...1.1.0) (2023-05-19)
 
 
