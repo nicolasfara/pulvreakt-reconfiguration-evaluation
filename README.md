@@ -64,7 +64,8 @@ To run the notebook:
 
 ```
 $ cd data-visualization
-$ pip install -r requirements.txt
+$ virtualenv myenv && source myenv/bin/activate
+$ pip install -r ../requirements.txt
 $ jupyter lab
 ```
 
