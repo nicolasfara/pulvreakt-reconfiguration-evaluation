@@ -1,3 +1,15 @@
+## [1.1.2](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.1.1...1.1.2) (2023-05-20)
+
+
+### Bug Fixes
+
+* use white color in blu bar ([c0c5506](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/c0c5506bcb78829f815302f331abb4edbf1d3e26))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.1.1 [skip ci] ([36f16db](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/commit/36f16db3f31f22412b8a6d61021a13b0a92e6696))
+
 ## [1.1.1](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.1.0...1.1.1) (2023-05-20)
 
 
