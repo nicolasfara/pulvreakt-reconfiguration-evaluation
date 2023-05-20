@@ -56,3 +56,16 @@ so that the charts can be regenerated without having to run the experiment again
 To regenerate the charts, run `docker compose run --no-deps charts`.
 Alternatively, follow the steps or the "reproduce natively" section,
 starting after the part describing how to re-launch the simulations.
+
+## Show custom charts
+
+The custom charts were generated inside a [jupyter notebook](data-visualization/Data%20Visualization.ipynb).  
+To run the notebook:
+
+```
+$ cd data-visualization
+$ pip install -r requirements.txt
+$ jupyter lab
+```
+
+The las command open a browser windows with the notebook. Run all the cells to show the custom charts.
