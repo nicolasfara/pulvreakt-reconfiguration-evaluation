@@ -86,10 +86,10 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - name: Download charts artifact
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: charts
+#      - name: Download charts artifact
+#        uses: actions/download-artifact@v3.0.2
+#        with:
+#          name: charts
       - name: Find the version of Node from package.json
         id: node-version
         run: echo "version=$(jq -r .engines.node package.json)" >> $GITHUB_OUTPUT
