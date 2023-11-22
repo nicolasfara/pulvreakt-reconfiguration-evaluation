@@ -8,14 +8,15 @@
  */
 package it.unibo.alchemist.boundary.swingui.monitor.impl
 
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
-import it.unibo.alchemist.model.implementations.times.DoubleTime
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Reaction
-import it.unibo.alchemist.model.interfaces.Time
+
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Reaction
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.times.DoubleTime
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -58,7 +59,7 @@ class NodeTracker<T, P : Position<out P>>(node: Node<T>) : JPanel(), OutputMonit
     }
 
     override fun initialized(environment: Environment<T, P>) {
-        stepDone(environment, null, DoubleTime.ZERO, 0L)
+        stepDone(environment, null, DoubleTime(), 0L)
     }
 
     override fun stepDone(environment: Environment<T, P>, reaction: Actionable<T>?, time: Time, step: Long) {

@@ -1,8 +1,8 @@
 package it.nicolasfarabegoli.pulverization
 
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.NodeProperty
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeProperty
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.math3.random.RandomGenerator

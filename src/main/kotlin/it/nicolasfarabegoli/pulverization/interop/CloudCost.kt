@@ -1,10 +1,11 @@
 package it.nicolasfarabegoli.pulverization.interop
 
 import it.nicolasfarabegoli.pulverization.GetMolecule
-import it.unibo.alchemist.loader.export.extractors.AbstractDoubleExporter
-import it.unibo.alchemist.model.interfaces.Actionable
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.boundary.extractors.AbstractDoubleExporter
+import it.unibo.alchemist.model.Actionable
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.Time
+
 import kotlin.math.ceil
 
 class CloudCost @JvmOverloads constructor(

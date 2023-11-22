@@ -67,17 +67,38 @@ val taskSize = taskSizeFromProject ?: (512 + 256)
 val threadCount = maxOf(1, minOf(Runtime.getRuntime().availableProcessors(), heap.toInt() / taskSize))
 
 val alchemistGroup = "Run Alchemist"
+
+val maxTime: String by project
+val batch: String by project
+
 /*
  * This task is used to run all experiments in sequence
  */
-val runAllGraphic by tasks.register<DefaultTask>("runAllGraphic") {
+val runAll by tasks.register<DefaultTask>("runAll") {
     group = alchemistGroup
-    description = "Launches all simulations with the graphic subsystem enabled"
+    description = "Launches all simulations"
 }
-val runAllBatch by tasks.register<DefaultTask>("runAllBatch") {
-    group = alchemistGroup
-    description = "Launches all experiments"
-}
+
+val ciAlchemistConfiguration = """
+    terminate:
+      - type: AfterTime
+        parameters: $maxTime
+""".trimIndent()
+
+val batchAlchemistConfiguration = """
+launcher:
+  type: HeadlessSimulationLauncher
+  parameters:
+    variables: [seed, cloud_epi, balance, epi_ratio, device_count]
+""".trimIndent()
+
+fun graphicsAlchemistConfiguration(effectName: String) = """
+    launcher:
+      type: SingleRunSwingUI
+      parameters:
+        graphics: effects/$effectName.json
+""".trimIndent()
+
 /*
  * Scan the folder with the simulation files, and create a task for each one of them.
  */
@@ -85,49 +106,74 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
     ?.filter { it.extension == "yml" }
     ?.sortedBy { it.nameWithoutExtension }
     ?.forEach {
-        fun basetask(name: String, additionalConfiguration: JavaExec.() -> Unit = {}) = tasks.register<JavaExec>(name) {
+        val task by tasks.register<JavaExec>("run${it.nameWithoutExtension.capitalized()}") {
             group = alchemistGroup
-            description = "Launches graphic simulation ${it.nameWithoutExtension}"
+            description = "Launch simulation ${it.nameWithoutExtension}"
             mainClass.set("it.unibo.alchemist.Alchemist")
             classpath = sourceSets["main"].runtimeClasspath
-            args("-y", it.absolutePath)
-            if (System.getenv("CI") == "true") {
-                args("-hl", "-t", "2")
-            } else {
-                args("-g", "effects/${it.nameWithoutExtension}.json")
-            }
+
             javaLauncher.set(
                 javaToolchains.launcherFor {
-                    languageVersion.set(JavaLanguageVersion.of(usesJvm))
+                    languageVersion.set(JavaLanguageVersion.of(multiJvm.latestJava))
                 },
             )
-            this.additionalConfiguration()
+            jvmArgs("-Dsun.java2d.opengl=true")
+            args("run", it.absolutePath, "--override")
+
+            when {
+                System.getenv("CI") == "true" -> args(ciAlchemistConfiguration)
+                batch == "true" -> {
+                    maxHeapSize = "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
+                    args(batchAlchemistConfiguration)
+                }
+                else -> args(graphicsAlchemistConfiguration(it.nameWithoutExtension))
+            }
         }
-        val capitalizedName = it.nameWithoutExtension.capitalized()
-        val graphic by basetask("run${capitalizedName}Graphic")
-        runAllGraphic.dependsOn(graphic)
-        val batch by basetask("run${capitalizedName}Batch") {
-            description = "Launches batch experiments for $capitalizedName"
-            maxHeapSize = "220g"// "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
-            File("data").mkdirs()
-            val variablesUnderTest = arrayOf(
-                "seed",
-                // uncomment to test for different kinds of applications
-                // "battery_discharge_time",
-                "cloud_epi",
-                "balance",
-                "epi_ratio",
-                "device_count",
-            )
-            args(
-                "-e",
-                "data/${it.nameWithoutExtension}",
-                "-b",
-                "-var",
-                *variablesUnderTest,
-                "-p", threadCount,
-                "-i", 1,
-            )
-        }
-        runAllBatch.dependsOn(batch)
+
+        runAll.dependsOn(task)
+//        fun basetask(name: String, additionalConfiguration: JavaExec.() -> Unit = {}) = tasks.register<JavaExec>(name) {
+//            group = alchemistGroup
+//            description = "Launches graphic simulation ${it.nameWithoutExtension}"
+//            mainClass.set("it.unibo.alchemist.Alchemist")
+//            classpath = sourceSets["main"].runtimeClasspath
+//            args("-y", it.absolutePath)
+//            if (System.getenv("CI") == "true") {
+//                args("-hl", "-t", "2")
+//            } else {
+//                args("-g", "effects/${it.nameWithoutExtension}.json")
+//            }
+//            javaLauncher.set(
+//                javaToolchains.launcherFor {
+//                    languageVersion.set(JavaLanguageVersion.of(usesJvm))
+//                },
+//            )
+//            this.additionalConfiguration()
+//        }
+//        val capitalizedName = it.nameWithoutExtension.capitalized()
+//        val graphic by basetask("run${capitalizedName}Graphic")
+//        runAllGraphic.dependsOn(graphic)
+//        val batch by basetask("run${capitalizedName}Batch") {
+//            description = "Launches batch experiments for $capitalizedName"
+//            maxHeapSize = "220g"// "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
+//            File("data").mkdirs()
+//            val variablesUnderTest = arrayOf(
+//                "seed",
+//                // uncomment to test for different kinds of applications
+//                // "battery_discharge_time",
+//                "cloud_epi",
+//                "balance",
+//                "epi_ratio",
+//                "device_count",
+//            )
+//            args(
+//                "-e",
+//                "data/${it.nameWithoutExtension}",
+//                "-b",
+//                "-var",
+//                *variablesUnderTest,
+//                "-p", threadCount,
+//                "-i", 1,
+//            )
+//        }
+//        runAllBatch.dependsOn(batch)
     }

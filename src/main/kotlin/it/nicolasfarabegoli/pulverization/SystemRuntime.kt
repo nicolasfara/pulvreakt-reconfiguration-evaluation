@@ -21,7 +21,7 @@ import it.nicolasfarabegoli.pulverization.runtime.dsl.model.Host
 import it.nicolasfarabegoli.pulverization.runtime.dsl.pulverizationRuntime
 import it.nicolasfarabegoli.pulverization.runtime.reconfiguration.NewConfiguration
 import it.nicolasfarabegoli.pulverization.runtime.reconfiguration.Reconfigurator
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
+import it.unibo.alchemist.model.molecules.SimpleMolecule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter

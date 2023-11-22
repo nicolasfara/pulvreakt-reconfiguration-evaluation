@@ -1,10 +1,10 @@
 package it.nicolasfarabegoli.pulverization
 
-import it.unibo.alchemist.model.implementations.environments.OSMEnvironment
-import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.model.interfaces.Node
-import it.unibo.alchemist.model.interfaces.NodeProperty
-import it.unibo.alchemist.model.interfaces.Time
+import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Node
+import it.unibo.alchemist.model.NodeProperty
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.maps.environments.OSMEnvironment
 import org.apache.commons.math3.random.RandomGenerator
 import org.protelis.lang.datatype.impl.ArrayTupleImpl
 

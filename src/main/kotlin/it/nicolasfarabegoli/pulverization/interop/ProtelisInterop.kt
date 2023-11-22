@@ -4,15 +4,16 @@ package it.nicolasfarabegoli.pulverization.interop
 
 import it.nicolasfarabegoli.pulverization.*
 import it.nicolasfarabegoli.pulverization.runtime.PulverizationRuntime
-import it.unibo.alchemist.boundary.interfaces.OutputMonitor
-import it.unibo.alchemist.core.interfaces.Simulation
-import it.unibo.alchemist.model.implementations.properties.ProtelisDevice
-import it.unibo.alchemist.model.interfaces.Environment
-import it.unibo.alchemist.model.interfaces.GeoPosition
-import it.unibo.alchemist.model.interfaces.Node.Companion.asProperty
-import it.unibo.alchemist.model.interfaces.Position
-import it.unibo.alchemist.model.interfaces.Time
-import it.unibo.alchemist.protelis.AlchemistExecutionContext
+import it.unibo.alchemist.boundary.OutputMonitor
+import it.unibo.alchemist.core.Simulation
+import it.unibo.alchemist.model.Environment
+import it.unibo.alchemist.model.GeoPosition
+import it.unibo.alchemist.model.Position
+import it.unibo.alchemist.model.Time
+import it.unibo.alchemist.model.protelis.AlchemistExecutionContext
+import it.unibo.alchemist.protelis.properties.ProtelisDevice
+import it.unibo.alchemist.model.Node.Companion.asProperty
+
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
