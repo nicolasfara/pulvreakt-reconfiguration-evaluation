@@ -9,7 +9,7 @@ COPY *.kts ./
 COPY *.properties ./
 RUN sed -i '/alias(libs.plugins.gitSemVer)/d' build.gradle.kts
 COPY gradlew* ./
-RUN CI=true ./gradlew runAllGraphic --parallel
+RUN CI=true ./gradlew runAll --parallel
 RUN rm -rf data
 RUN ./gradlew --stop
-CMD ./gradlew runAllBatch
+CMD ./gradlew runAll
