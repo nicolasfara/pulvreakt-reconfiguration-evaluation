@@ -16,11 +16,12 @@ config.plugins.push(
         "prepareCmd": prepareCmd,
         "publishCmd": publishCmd,
     }],
+    "@semantic-release/github",
     // ["@semantic-release/github", {
     //     "assets": [
     //         { "path": "charts.tar.zst" },
     //      ]
     // }],
-    "@semantic-release/git",
+    "@semantic-release/git"
 )
 module.exports = config
