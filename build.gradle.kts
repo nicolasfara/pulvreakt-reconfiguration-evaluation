@@ -68,8 +68,8 @@ val threadCount = maxOf(1, minOf(Runtime.getRuntime().availableProcessors(), hea
 
 val alchemistGroup = "Run Alchemist"
 
-val maxTime: String by project
-val batch: String by project
+val maxTime = project.properties["maxTime"] as? Int ?: 50
+val batch = project.properties["batch"] as? Boolean ?: false
 
 /*
  * This task is used to run all experiments in sequence
@@ -122,7 +122,7 @@ File(rootProject.rootDir.path + "/src/main/yaml").listFiles()
 
             when {
                 System.getenv("CI") == "true" -> args(ciAlchemistConfiguration)
-                batch == "true" -> {
+                batch -> {
                     maxHeapSize = "${minOf(heap.toInt(), Runtime.getRuntime().availableProcessors() * taskSize)}m"
                     args(batchAlchemistConfiguration)
                 }
