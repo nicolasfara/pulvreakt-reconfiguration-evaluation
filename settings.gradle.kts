@@ -11,4 +11,4 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = "acsos-2023-pulverization-evaluation"
+rootProject.name = "pulvreakt-reconfiguration-evaluation"
