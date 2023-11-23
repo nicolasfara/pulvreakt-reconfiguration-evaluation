@@ -1,3 +1,20 @@
+## [1.3.0](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/compare/1.2.0...1.3.0) (2023-11-23)
+
+
+### Features
+
+* updare release file ([9d7bae5](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/9d7bae511ed5d69509d3ef589dfccd4d13798267))
+
+
+### Build and continuous integration
+
+* use default values for properties ([ebc711a](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/ebc711ad48ff1a768222ddec650a4ca09af3fa47))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.2.0 [skip ci] ([99714a1](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/99714a1ef6c4f82decbf94068d3000f5d7f6a521))
+
 ## [1.2.0](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/compare/1.1.2...1.2.0) (2023-11-23)
 
 
