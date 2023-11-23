@@ -1,3 +1,78 @@
+## [1.2.0](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/compare/1.1.2...1.2.0) (2023-11-23)
+
+
+### Features
+
+* update repository name ([a19d8b3](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/a19d8b3a02864f10bc7c4e23115570ec4f636f29))
+
+
+### Dependency updates
+
+* **deps:** update alchemist to v26 ([c39d3c2](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/c39d3c2a7e61f6bdcd718221b38704fe494873e0))
+* **deps:** update alchemist to v29.0.1 ([58f6afb](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/58f6afb38276de29b062f42617540d50568c4e53))
+* **deps:** update alpine docker tag to v3.18.4 ([9c4a1a7](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/9c4a1a7b975752b3ef01d09da60b9636d19359ae))
+* **deps:** update dependency com.github.ben-manes.caffeine:caffeine to v3.1.8 ([92d9285](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/92d9285179338b70cb78aac00913aadae07d4b1d))
+* **deps:** update dependency jupyterlab to v4.0.1 ([cb51832](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/cb518324674f289394c0ebf40dbb8ae8ca92ef27))
+* **deps:** update dependency jupyterlab to v4.0.2 ([826f041](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/826f04111a4913d6b16f22092899aa928b9c3b2f))
+* **deps:** update dependency jupyterlab to v4.0.9 ([e015138](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/e01513856474e6333b496a353187c03252b5f9cf))
+* **deps:** update dependency matplotlib to v3.7.4 ([8db83dc](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/8db83dc5f186fb27ddcc26085c197a8559d92e6f))
+* **deps:** update dependency matplotlib to v3.8.2 ([dde54e1](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/dde54e181b019317d6a1c09dda4907052bb62a1b))
+* **deps:** update dependency org.jetbrains.kotlin.jvm to v1.8.22 ([bdd4755](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/bdd475514566a92452676c02b763c02b7b6184c0))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core to v1.7.3 ([5c462b5](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/5c462b5ec4f009fcbcd8be35d5d9b29901be18b0))
+* **deps:** update dependency seaborn to v0.13.0 ([8f2d29a](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/8f2d29a2e1ef0f80b7b59cdba6365f0c4c9dce84))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.27 ([03c633b](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/03c633beb6703723ac6cad0c725846ae29ed2906))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.30 ([d54e7b7](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/d54e7b7228522bb692bcbb41254f35aa765f26d5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.32 ([8c3638f](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/8c3638f020f0f8e59494f99aaaaeb3c232d522a7))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.33 ([49f06e8](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/49f06e8d8563dd0a72b44af5b83f57843537feab))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.76 ([9aa39bf](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/9aa39bf8c7ed817d0fdb15fd5498b857e6fc4dc5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.77 ([b0910eb](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/b0910ebf4577bc5fff196f94e0426aecd86dcfc2))
+* **deps:** update dependency xarray to v2023.11.0 ([e51bc41](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/e51bc4118c281b36551957d694d1d206b8b69b6e))
+* **deps:** update dependency xarray to v2023.5.0 ([18560d5](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/18560d5558a94cd578b6d760bb15c617afdf6f6e))
+* **deps:** update node.js to 18.18 ([8d5dd3b](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/8d5dd3bae7dfd3b7cf202aba0d64c62c5f1525ab))
+* **deps:** update node.js to v20 ([5ee0097](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/5ee009737b54067ad6c9e69f8adf6fb4834de3da))
+* **deps:** update plugin com.gradle.enterprise to v3.13.3 ([a0bf2a2](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/a0bf2a2e921bbf3f65dd19a6fa9bbc7a43a87630))
+* **deps:** update plugin gitsemver to v1.1.10 ([937dc48](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/937dc4825a31dcc7db904ea2224ca91ac8a91937))
+* **deps:** update plugin gitsemver to v2 ([b35fe66](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/b35fe661a4b4871f6a8a775361fc9c8da26a180d))
+* **deps:** update plugin kotlin-qa to v0.42.0 ([b05bb78](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/b05bb78f14665f5719922f6ae3b08a8b5fbd6389))
+* **deps:** update plugin kotlin-qa to v0.42.1 ([7beda1d](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/7beda1def051601453d2ebc4ac3ad2486d1ad64b))
+* **deps:** update plugin kotlin-qa to v0.43.0 ([65b0d69](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/65b0d69d2ccf49de04a939a30834def54bbbe065))
+* **deps:** update plugin kotlin-qa to v0.44.0 ([05d562b](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/05d562b6047e5051a144fd22409019b5dff59398))
+* **deps:** update plugin multijvmtesting to v0.5.2 ([bfd183c](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/bfd183cc1fcbd9524528960975e9220da51c27bd))
+* **deps:** update plugin multijvmtesting to v0.5.6 ([279acaa](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/279acaa77800e1e226b4829b6f12fbcdd5ff539e))
+* **deps:** update pulverization to v0.7.2 ([f256c1d](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/f256c1d046a2018edaa68c802352d83d525d0eb1))
+* **deps:** update python docker tag to v3.11.4 ([5c6b2e0](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/5c6b2e097713236770ac1c7a08ced13deeb8039f))
+* **deps:** update python docker tag to v3.11.5 ([b3611f9](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/b3611f9ab7614f951a6e9319ea9ce7a0ec551c93))
+* **deps:** update python docker tag to v3.11.6 ([5bcdae4](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/5bcdae40d94532db20365f92d48aa4b60419131f))
+* **deps:** update python docker tag to v3.12.0 ([8b1afab](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/8b1afabf00d1a19e559569f73d2a6e061c9771d7))
+
+
+### Documentation
+
+* update readme ([cdfff1f](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/cdfff1faebb88d472de36603f05860187c7e3357))
+
+
+### Build and continuous integration
+
+* add gradle properties inside the container ([c0f11b9](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/c0f11b9e6f5919ad5b5c3d66b265a8659b738f27))
+* **deps:** update actions/checkout action to v3.5.3 ([20a8fd6](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/20a8fd6f10f50b8251499d7796abae57a715ace1))
+* **deps:** update actions/checkout action to v3.6.0 ([5194399](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/51943999373752bf8267277aff07a8dfa20d51b8))
+* **deps:** update actions/checkout action to v4 ([c8cb469](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/c8cb46907412723e6e1e4246a2ac2a115b86b5eb))
+* **deps:** update actions/setup-node action to v3.8.2 ([8548fc5](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/8548fc587e93cea309efa368b04badc37cc723f0))
+* **deps:** update actions/setup-node action to v4 ([98893ef](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/98893ef0728135bfbac38787f3be6af7a039ae3a))
+* **deps:** update actions/setup-python action to v4.6.1 ([471d323](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/471d323e75e2057fcdf5e255bda85804f21d2f12))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.11 ([c449dc5](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/c449dc523fcf1dc33ce7e2698e3b94e8abbefcc4))
+* **deps:** update danysk/build-check-deploy-gradle-action action to v2.2.6 ([1bb95f7](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/1bb95f7440706e720d321b6ee88500969f011347))
+* disable chart generation ([0e0029e](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/0e0029e99ff7aa89cb78f0de4936630fb6b867d1))
+* disable charts upload ([e9a5bc3](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/e9a5bc331bf39bae890f20f539292b2702cc0ce8))
+* fix task execution ([34761c1](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/34761c19e4c371dbc52be053f6bef8493df50a7d))
+* some deps bump ([5035f09](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/5035f0964d931bc3e42ecd98f5b0d876f85006e3))
+* use new task name ([d68ed1b](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/d68ed1bc51d9a9f68ce154c729062669049c3075))
+
+
+### General maintenance
+
+* **release:** update gradle.properties .env versions to 1.1.2 [skip ci] ([364cce1](https://github.com/nicolasfara/pulvreakt-reconfiguration-evaluation/commit/364cce12bbb7eeb741d043a64ea555c18bb93430))
+
 ## [1.1.2](https://github.com/nicolasfara/ACSOS-2023-pulverization-evaluation/compare/1.1.1...1.1.2) (2023-05-20)
 
 
