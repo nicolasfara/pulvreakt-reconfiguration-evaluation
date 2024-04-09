@@ -1,6 +1,6 @@
 [versions]
 alchemist = "33.0.6"
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 pulverization = "0.7.2"
 
 [libraries]
