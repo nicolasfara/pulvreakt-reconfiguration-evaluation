@@ -1,5 +1,5 @@
 matplotlib ==3.9.1
-xarray ==2024.6.0
+xarray ==2024.7.0
 jupyter ==1.0.0
 jupyterlab ==4.2.4
 seaborn ==0.13.2
