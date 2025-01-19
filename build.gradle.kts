@@ -42,7 +42,7 @@ dependencies {
     implementation(libs.bundles.alchemist.protelis)
     implementation(libs.bundles.pulverization)
     implementation(libs.kotlinx.coroutine)
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     implementation("it.unibo.alchemist:alchemist-swingui:${libs.versions.alchemist.get()}")
     implementation("it.unibo.alchemist:alchemist-maps:${libs.versions.alchemist.get()}")
 }
